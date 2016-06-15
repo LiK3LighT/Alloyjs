@@ -1,18 +1,18 @@
-'use strict';
+"use strict";
 
 class Cache {
     static get(url, version) {
         version = version || 1;
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             if(Cache.memory[url]) {
                 resolve(Cache.memory[url]);
                 return;
             }
 
-            Cache.indexedDB.get(url, {version: version}).then(function(data) {
+            Cache.indexedDB.get(url, {version: version}).then((data) => {
                 resolve(data.getValues().resource);
-            }).catch(function(error) {
-                if(error !== undefined) console.warn('Failed to retrieve resource from IndexedDB', error);
+            }).catch((error) => {
+                if(error !== undefined) console.warn("Failed to retrieve resource from IndexedDB", error);
 
                 reject();
             });
@@ -26,4 +26,4 @@ class Cache {
     }
 }
 Cache.memory = {};
-Cache.indexedDB = new IndexedDB('cache', 2, 'resources', ['url', 'resource', 'version']);
+Cache.indexedDB = new IndexedDB("cache", 2, "resources", ["url", "resource", "version"]);

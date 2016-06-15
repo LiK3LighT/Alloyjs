@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class IndexedDB {
     constructor(databaseName, databaseVersion, storeName, structure) {
@@ -13,9 +13,9 @@ class IndexedDB {
     _init() {
         let scope = this;
 
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
 
-            (new Promise(function(resolve, reject) {
+            (new Promise((resolve, reject) => {
                 let request = indexedDB.open(scope.databaseName, scope.databaseVersion);
 
                 request.onupgradeneeded = function(event) { // onSuccess is executed after onupgradeneeded DONT resolve here.
@@ -31,30 +31,30 @@ class IndexedDB {
                 };
                 request.onerror = function(event) {
                     if(!scope.triedDelete) {
-                        console.log('Could not open indexedDB %s deleting exiting database and retrying...', scope.databaseName, event);
+                        console.log("Could not open indexedDB %s deleting exiting database and retrying...", scope.databaseName, event);
                         let request = indexedDB.deleteDatabase(scope.databaseName);
-                        request.onsuccess = function () {
+                        request.onsuccess = function() {
                             scope.triedDelete = true;
                             scope._init().then(resolve).catch(reject);
                         };
-                        request.onerror = function () {
-                            console.warn('Error while deleting indexedDB %s', scope.databaseName, event);
+                        request.onerror = function() {
+                            console.warn("Error while deleting indexedDB %s", scope.databaseName, event);
                             reject(event);
                         };
-                        request.onblocked = function (event) {
-                            console.warn('Couldn\'t delete indexedDB %s due to the operation being blocked', scope.databaseName, event);
+                        request.onblocked = function(event) {
+                            console.warn("Couldn't delete indexedDB %s due to the operation being blocked", scope.databaseName, event);
                             reject(event);
                         };
                     } else {
-                        console.warn('Could not open indexedDB %s', scope.databaseName, event);
+                        console.warn("Could not open indexedDB %s", scope.databaseName, event);
                         reject(event);
                     }
                 };
                 request.onblocked = function(event) {
-                    console.warn('Couldn\'t open indexedDB %s due to the operation being blocked', scope.databaseName, event);
+                    console.warn("Couldn't open indexedDB %s due to the operation being blocked", scope.databaseName, event);
                     reject(event);
                 };
-            })).then(function(data) {
+            })).then((data) => {
                 scope.initialized = true;
                 resolve(data);
             }).catch(reject);
@@ -71,11 +71,11 @@ class IndexedDB {
     _getStore(action) {
         let scope = this;
 
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             if(scope.initialized) {
                 resolve(scope.__getStore(action));
             } else {
-                scope._init().then(function () {
+                scope._init().then(() => {
                     resolve(scope.__getStore(action));
                 }).catch(reject);
             }
@@ -86,7 +86,7 @@ class IndexedDB {
         let scope = this;
 
         return new Promise(function(resolve, reject) {
-            scope._getStore(IndexedDB.ACTIONS.READONLY).then(function(store) {
+            scope._getStore(IndexedDB.ACTIONS.READONLY).then((store) => {
                 let request = store.get(url);
                 request.onsuccess = function(event) {
                     let values = event.target.result;
@@ -117,13 +117,13 @@ class IndexedDB {
 
         let data = arguments;
 
-        return new Promise(function(resolve, reject) {
+        return new Promise((resolve, reject) => {
             let putData = {};
             for(var i = 0, length = scope.structure.length; i < length; i++) {
                 putData[scope.structure[i]] = data[i];
             }
 
-            scope._getStore(IndexedDB.ACTIONS.READWRITE).then(function(store) {
+            scope._getStore(IndexedDB.ACTIONS.READWRITE).then((store) => {
                 let request = store.put(putData);
                 request.onsuccess = resolve;
                 request.onerror = reject;
@@ -134,8 +134,8 @@ class IndexedDB {
     remove(url) {
         let scope = this;
 
-        return new Promise(function(resolve, reject) {
-            scope._getStore(IndexedDB.ACTIONS.READWRITE).then(function(store) {
+        return new Promise((resolve, reject) => {
+            scope._getStore(IndexedDB.ACTIONS.READWRITE).then((store) => {
                 let request = store.remove(url);
                 request.onsuccess = resolve;
                 request.onerror = reject;
@@ -146,8 +146,8 @@ class IndexedDB {
     clear() {
         let scope = this;
 
-        return new Promise(function(resolve, reject) {
-            scope._getStore(IndexedDB.ACTIONS.READWRITE).then(function(store) {
+        return new Promise((resolve, reject) => {
+            scope._getStore(IndexedDB.ACTIONS.READWRITE).then((store) => {
                 let request = store.clear();
                 request.onsuccess = resolve;
                 request.onerror = reject;
@@ -156,6 +156,6 @@ class IndexedDB {
     }
 }
 IndexedDB.ACTIONS = {
-    READONLY: 'readonly',
-    READWRITE: 'readwrite'
+    READONLY: "readonly",
+    READWRITE: "readwrite"
 };

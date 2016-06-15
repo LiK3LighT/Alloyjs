@@ -30,7 +30,7 @@ class XHRLoader {
             if(onProgress) request.addEventListener('progress', onProgress, false);
 
 
-            request.addEventListener('load', function(event) {
+            request.addEventListener('load', function() {
                 if(this.status === 200) {
                     if(options.cache) {
                         Cache.set(url, this.response);
@@ -41,7 +41,7 @@ class XHRLoader {
                 }
             }, false);
 
-            request.addEventListener('error', function(event) {
+            request.addEventListener('error', function() {
                 reject(this);
             }, false);
 
