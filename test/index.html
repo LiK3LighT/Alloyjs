@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+
+            div {
+                min-height: 10px;
+                background-color: red;
+            }
+
+        </style>
+    </head>
+    <body>
+        <app-root id="root"></app-root>
+
+        <script src="../src/core/utils/StringUtils.js"></script>
+        <script src="../src/core/utils/IndexedDB/IndexedDBResult.js"></script>
+        <script src="../src/core/utils/IndexedDB/IndexedDB.js"></script>
+        <script src="../src/core/utils/AjaxLoaders/Cache.js"></script>
+        <script src="../src/core/utils/AjaxLoaders/XHRLoader.js"></script>
+        <script src="../src/core/utils/AjaxLoaders/NodeListLoader.js"></script>
+        <!--script src="../src/core/ChangeableNodeList.js"></script-->
+        <script src="../src/core/Component.js"></script>
+        <script src="../src/Alloy.js"></script>
+        <!--script src="../src/plugins/For.js"></script-->
+
+        <script src="AppRoot.js"></script>
+        <script>
+            //App.render();
+
+            var root = Alloy.get("#root");
+        </script>
+    </body>
+</html>
