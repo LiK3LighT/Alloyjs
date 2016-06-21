@@ -2,10 +2,10 @@
 
 class NodeListLoader {
     static load(url, onProgress) {
-        return new Promise(function(resolve, reject) {
-            XHRLoader.load(url, {responseType: "document", cache: false}, onProgress).then(function(document) {
+        return new Promise((resolve, reject) => {
+            XHRLoader.load(url, {responseType: "document", cache: false}, onProgress).then((document) => {
                 resolve(document.body.childNodes);
-            }).catch(function(error) {
+            }).catch((error) => {
                 reject(error);
             });
         });

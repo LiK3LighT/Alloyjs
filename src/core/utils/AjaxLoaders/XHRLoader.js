@@ -3,7 +3,7 @@
 class XHRLoader {
     static load(url, options, onProgress) {
         return new Promise((resolve, reject) => {
-            if(!options) options = {};
+            if(options === undefined) options = {};
 
             options.cache = options.cache !== undefined ? options.cache : XHRLoader.DEFAULT_CACHE_STATE;
             if(options.cache) {
@@ -31,7 +31,7 @@ class XHRLoader {
             if(onProgress) request.addEventListener("progress", onProgress, false);
 
 
-            request.addEventListener("load", () => {
+            request.addEventListener("load", function() {
                 if(this.status === 200) {
                     if(options.cache) {
                         Cache.set(url, this.response);
@@ -42,7 +42,7 @@ class XHRLoader {
                 }
             }, false);
 
-            request.addEventListener("error", () => {
+            request.addEventListener("error", function() {
                 reject(this);
             }, false);
 

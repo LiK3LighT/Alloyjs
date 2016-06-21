@@ -1,9 +1,11 @@
-'use strict';
+"use strict";
 
 class AppRoot extends Alloy.Component {
 
-    constructor() {
-        super();
+    constructor(rootNode) {
+        super(rootNode, {
+            template: "appRoot"
+        });
     }
 
 }

@@ -77,7 +77,7 @@ let _buildBindMap = function(startNode) {
 };
 
 let _update = function(variableName) {
-    for(let value of this.$$bindMap.get(variableName)) {
+    for(let value of this._bindMap.get(variableName)) {
         let nodeToUpdate = value[0];
         let evalText = value[1];
 
@@ -92,10 +92,10 @@ let _update = function(variableName) {
             if(this[variablesVariableName] instanceof NodeList || this[variablesVariableName] instanceof ChangeableNodeList || this[variablesVariableName] instanceof HTMLElement) {
                 evalText = evalText.replace(new RegExp("\\${\\s*this\\." + variablesVariableName + "\\s*}", "g"), "");
                 if(variableName === variablesVariableName) {
-                    if(!this.$$appendedChildren.has(variablesVariableName)) {
-                        this.$$appendedChildren.set(variablesVariableName, []);
+                    if(!this._appendedChildren.has(variablesVariableName)) {
+                        this._appendedChildren.set(variablesVariableName, []);
                     }
-                    let appendedChildren = this.$$appendedChildren.get(variablesVariableName);
+                    let appendedChildren = this._appendedChildren.get(variablesVariableName);
                     if(appendedChildren.length > 0) {
                         for(let child of appendedChildren) {
                             htmlNodeToUpdate.removeChild(child);
@@ -131,7 +131,7 @@ let _update = function(variableName) {
 };
 
 let _buildComponent = function(nodeList) {
-    this.$$rootNode = document.createElement(this.constructor.name);
+    this._rootNode = document.createElement(this.constructor.name);
 
     if(nodeList instanceof NodeList) {
         console.log("test 1",nodeList[1]);
@@ -142,20 +142,20 @@ let _buildComponent = function(nodeList) {
             console.log("test 3",nodeList[1] instanceof Node);
             console.log("test 4",nodeList[1]);
             console.log("test 5",nodeList[1].parentNode);
-            this.$$rootNode.appendChild(nodeList[i]); // Magically doesn't add child Nodes for custom tags? But that's what we want
+            this._rootNode.appendChild(nodeList[i]); // Magically doesn't add child Nodes for custom tags? But that's what we want
         }
     } else if(nodeList instanceof ChangeableNodeList) {
         for (let node of nodeList) {
-            this.$$rootNode.appendChild(node); // Magically doesn't add child Nodes for custom tags? But that's what we want
+            this._rootNode.appendChild(node); // Magically doesn't add child Nodes for custom tags? But that's what we want
         }
     }
 
-    this.$$bindMap = _buildBindMap.call(this, this.$$rootNode);
+    this._bindMap = _buildBindMap.call(this, this._rootNode);
 
-    console.log("Bind map", this.$$bindMap);
+    console.log("Bind map", this._bindMap);
 
     for (let componentType of _componentTypeCache.values()) {
-        componentType.render(this.$$rootNode, this);
+        componentType.render(this._rootNode, this);
     }
 
     //this.update(); // TODO: consider if this is a good thing to do
@@ -190,11 +190,11 @@ class Component {
             options.template += ".html";
         }
 
-        this.$$appendedChildren = new Map();
-        this.$$attributes = _componentArguments[0];
-        this.$$parentComponent = _componentArguments[1];
+        this._appendedChildren = new Map();
+        this._attributes = _componentArguments[0];
+        this._parentComponent = _componentArguments[1];
 
-        this.$$promise = new Promise((resolve, reject) => {
+        this._promise = new Promise((resolve, reject) => {
             if(options.templateMethod === 'inline') {
                 options.template = domParser.parseFromString(options.template, "text/html").body.childNodes;
             }
@@ -214,18 +214,18 @@ class Component {
     }
 
     getParent() {
-        return this.$$parentComponent;
+        return this._parentComponent;
     }
 
     getAttributes() {
-        return this.$$attributes;
+        return this._attributes;
     }
 
     update(variableName) {
         if(variableName) {
             _update.call(this, variableName);
         } else {
-            for(let key of this.$$bindMap.keys()) {
+            for(let key of this._bindMap.keys()) {
                 _update.call(this, key);
             }
         }
@@ -240,8 +240,8 @@ class Component {
             let childNodes = node.childNodes;
 
             _componentArguments = [temporaryAttributes, parentComponent];
-            (new this(new ChangeableNodeList(childNodes))).$$promise.then((component) => {
-                node.parentNode.replaceChild(component.$$rootNode, node);
+            (new this(new ChangeableNodeList(childNodes)))._promise.then((component) => {
+                node.parentNode.replaceChild(component._rootNode, node);
             });
         }
     }
