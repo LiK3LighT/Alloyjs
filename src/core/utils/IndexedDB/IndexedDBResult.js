@@ -1,6 +1,4 @@
-'use strict';
-
-class IndexedDBResult {
+export default class IndexedDBResult {
     constructor(values) {
         this.values = values;
     }

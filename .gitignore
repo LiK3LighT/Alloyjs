@@ -2,3 +2,6 @@
 .idea/
 .settings/
 .vscode
+
+node_modules/
+dist/temp/

@@ -1,6 +1,6 @@
-"use strict";
+import Cache from "./Cache";
 
-class XHRLoader {
+export default class XHRLoader {
     static load(url, options, onProgress) {
         return new Promise((resolve, reject) => {
             if(options === undefined) options = {};
@@ -51,6 +51,6 @@ class XHRLoader {
     }
 }
 XHRLoader.DEFAULT_METHOD = "get";
-XHRLoader.DEFAULT_MIME_TYPE = false; // Automatic
-XHRLoader.DEFAULT_RESPONSE_TYPE = false; // Automatic
+XHRLoader.DEFAULT_MIME_TYPE = null; // Automatic
+XHRLoader.DEFAULT_RESPONSE_TYPE = null; // Automatic
 XHRLoader.DEFAULT_CACHE_STATE = true;

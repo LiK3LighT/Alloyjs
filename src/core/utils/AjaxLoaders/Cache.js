@@ -1,6 +1,6 @@
-"use strict";
+import IndexedDB from "../IndexedDB/IndexedDB";
 
-class Cache {
+export default class Cache {
     static get(url, version) {
         version = version || 1;
         return new Promise((resolve, reject) => {

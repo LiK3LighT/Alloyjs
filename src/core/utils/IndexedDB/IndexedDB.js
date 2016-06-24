@@ -1,6 +1,6 @@
-"use strict";
+import IndexedDBResult from "./IndexedDBResult";
 
-class IndexedDB {
+export default class IndexedDB {
     constructor(databaseName, databaseVersion, storeName, structure) {
         this.databaseName = databaseName;
         this.databaseVersion = databaseVersion;

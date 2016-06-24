@@ -11,24 +11,19 @@
         </style>
     </head>
     <body>
-        <app-root id="root">
-            <div>test</div>
-        </app-root>
+        <tab-container>
+            <tab-pane title="test">
+                Hello World
+            </tab-pane>
+            <tab-pane title="test2">
+                Hello World2
+            </tab-pane>
+        </tab-container>
 
-        <script src="../src/core/utils/StringUtils.js"></script>
-        <script src="../src/core/utils/IndexedDB/IndexedDBResult.js"></script>
-        <script src="../src/core/utils/IndexedDB/IndexedDB.js"></script>
-        <script src="../src/core/utils/AjaxLoaders/Cache.js"></script>
-        <script src="../src/core/utils/AjaxLoaders/XHRLoader.js"></script>
-        <!--script src="../src/core/ChangeableNodeList.js"></script-->
-        <script src="../src/core/Component.js"></script>
-        <script src="../src/Alloy.js"></script>
-        <!--script src="../src/plugins/For.js"></script-->
+        <script src="../dist/alloy.js"></script>
 
-        <script src="AppRoot.js"></script>
-        <script>
-            /*var root = Alloy.get("#root");
-            console.log(root.constructor);*/
-        </script>
+        <script src="../src/plugins/loops/For.js"></script>
+        <script src="../src/plugins/tabs/TabContainer.js"></script>
+        <script src="../src/plugins/tabs/TabPane.js"></script>
     </body>
 </html>
