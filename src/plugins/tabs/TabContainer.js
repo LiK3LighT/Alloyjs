@@ -4,14 +4,27 @@ class TabContainer extends Alloy.Component {
 
     constructor(rootNode) {
         super(rootNode, {
-            template: "<div class='controls'><span for='let pane in this.panes'>$(pane.title)</span></div>${this.panes}",
+            template: "<div class='controls'><a for='let key in this.titles'>${this.titles[key]}</a></div>${this.panes}",
             templateMethod: "inline"
         });
     }
 
     attached() {
-        this.panes = this.getTranscludedChildren();
-        this.panes[0] = 'test';
+        this.titles = [];
+        this.panes = (new Alloy.NodeArray(this.getTranscludedChildren())).filter((node) => {
+            if(node._component instanceof TabPane) {
+                return true;
+            }
+        });
+    }
+
+    update(variableName) {
+        if(variableName === "panes") {
+            this.titles.length = 0;
+            for (let i = 0, node; node = this.panes[i]; i++) {
+                this.titles[this.titles.length] = node.title;
+            }
+        }
     }
 
 }

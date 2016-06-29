@@ -1,9 +1,10 @@
+//noinspection JSUnusedLocalSymbols
 export default class NodeArray extends Array {
-    constructor(array) {
+    constructor(nodeList) {
         super();
-        if(array instanceof Array) {
-            for (let i = 0, length = array.length; i < length; i++) {
-                this[i] = array[i];
+        if(nodeList instanceof NodeList) {
+            for (let i = 0, length = nodeList.length; i < length; i++) {
+                this[i] = nodeList[i];
             }
         }
     }

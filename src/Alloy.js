@@ -1,6 +1,7 @@
 import Component from "./core/Component";
 import Attribute from "./core/Attribute";
 import StringUtils from "./core/utils/StringUtils";
+import NodeArray from "./core/utils/NodeArray";
 
 class Alloy {
 	static register(component) {
@@ -36,5 +37,6 @@ class Alloy {
 Alloy._registeredAttributes = new Map();
 Alloy.Component = Component;
 Alloy.Attribute = Attribute;
+Alloy.NodeArray = NodeArray;
 
 export default Alloy;

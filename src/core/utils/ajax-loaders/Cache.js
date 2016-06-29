@@ -1,4 +1,4 @@
-import IndexedDB from "../IndexedDB/IndexedDB";
+import IndexedDB from "../indexed-db/IndexedDB";
 
 export default class Cache {
     static get(url, version) {

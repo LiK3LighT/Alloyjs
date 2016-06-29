@@ -1,3 +1,4 @@
+//noinspection JSUnusedLocalSymbols
 export default class Attribute {
 
     constructor(attributeNode) {
@@ -9,7 +10,7 @@ export default class Attribute {
             variables.add(variableMatch[1]);
             this.component.addUpdateCallback(variableMatch[1], (variableName) => {
                 this.update(variableName);
-            })
+            });
         }
     }
 

@@ -1,5 +1,10 @@
 import IndexedDBResult from "./IndexedDBResult";
 
+const ACTIONS = {
+    READONLY: "readonly",
+    READWRITE: "readwrite"
+};
+
 export default class IndexedDB {
     constructor(databaseName, databaseVersion, storeName, structure) {
         this.databaseName = databaseName;
@@ -86,7 +91,7 @@ export default class IndexedDB {
         let scope = this;
 
         return new Promise(function(resolve, reject) {
-            scope._getStore(IndexedDB.ACTIONS.READONLY).then((store) => {
+            scope._getStore(ACTIONS.READONLY).then((store) => {
                 let request = store.get(url);
                 request.onsuccess = function(event) {
                     let values = event.target.result;
@@ -123,7 +128,7 @@ export default class IndexedDB {
                 putData[scope.structure[i]] = data[i];
             }
 
-            scope._getStore(IndexedDB.ACTIONS.READWRITE).then((store) => {
+            scope._getStore(ACTIONS.READWRITE).then((store) => {
                 let request = store.put(putData);
                 request.onsuccess = resolve;
                 request.onerror = reject;
@@ -135,7 +140,7 @@ export default class IndexedDB {
         let scope = this;
 
         return new Promise((resolve, reject) => {
-            scope._getStore(IndexedDB.ACTIONS.READWRITE).then((store) => {
+            scope._getStore(ACTIONS.READWRITE).then((store) => {
                 let request = store.remove(url);
                 request.onsuccess = resolve;
                 request.onerror = reject;
@@ -147,7 +152,7 @@ export default class IndexedDB {
         let scope = this;
 
         return new Promise((resolve, reject) => {
-            scope._getStore(IndexedDB.ACTIONS.READWRITE).then((store) => {
+            scope._getStore(ACTIONS.READWRITE).then((store) => {
                 let request = store.clear();
                 request.onsuccess = resolve;
                 request.onerror = reject;
@@ -155,7 +160,3 @@ export default class IndexedDB {
         });
     }
 }
-IndexedDB.ACTIONS = {
-    READONLY: "readonly",
-    READWRITE: "readwrite"
-};

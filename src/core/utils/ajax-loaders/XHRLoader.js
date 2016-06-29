@@ -1,11 +1,16 @@
 import Cache from "./Cache";
 
+const DEFAULT_METHOD = "get";
+const DEFAULT_MIME_TYPE = null; // Automatic
+const DEFAULT_RESPONSE_TYPE = null; // Automatic
+const DEFAULT_CACHE_STATE = true;
+
 export default class XHRLoader {
     static load(url, options, onProgress) {
         return new Promise((resolve, reject) => {
             if(options === undefined) options = {};
 
-            options.cache = options.cache !== undefined ? options.cache : XHRLoader.DEFAULT_CACHE_STATE;
+            options.cache = options.cache !== undefined ? options.cache : DEFAULT_CACHE_STATE;
             if(options.cache) {
                 Cache.get(url).then(resolve).catch(function() {
                     XHRLoader._load(url, options, onProgress).then(resolve).catch(reject);
@@ -18,10 +23,10 @@ export default class XHRLoader {
 
     static _load(url, options, onProgress) {
         return new Promise((resolve, reject) => {
-            let method = options.method || XHRLoader.DEFAULT_METHOD;
+            let method = options.method || DEFAULT_METHOD;
             //noinspection JSUnresolvedVariable
-            let mimeType = options.mimeType || XHRLoader.DEFAULT_MIME_TYPE;
-            let responseType = options.responseType || XHRLoader.DEFAULT_RESPONSE_TYPE;
+            let mimeType = options.mimeType || DEFAULT_MIME_TYPE;
+            let responseType = options.responseType || DEFAULT_RESPONSE_TYPE;
 
             let request = new XMLHttpRequest();
             if(mimeType) request.overrideMimeType(mimeType);
@@ -50,7 +55,3 @@ export default class XHRLoader {
         });
     }
 }
-XHRLoader.DEFAULT_METHOD = "get";
-XHRLoader.DEFAULT_MIME_TYPE = null; // Automatic
-XHRLoader.DEFAULT_RESPONSE_TYPE = null; // Automatic
-XHRLoader.DEFAULT_CACHE_STATE = true;
