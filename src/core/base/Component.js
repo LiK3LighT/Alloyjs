@@ -1,6 +1,6 @@
-import XHRLoader from "./utils/ajax-loaders/XHRLoader";
+import XHRLoader from "./../utils/ajax-loaders/XHRLoader";
 import Alloy from "../Alloy";
-import NodeArray from "./utils/NodeArray";
+import NodeArray from "./../utils/NodeArray";
 
 const _triggerUpdateCallbacks = function(variableName) {
     if(this._variableUpdateCallbacks.has(variableName)) {
@@ -35,9 +35,7 @@ const _buildSetterVariable = function(variableName) {
                         }
                         if(target[property] !== value) {
                             target[property] = value;
-                            if(property !== "length") {
-                                _triggerUpdateCallbacks.call(this, variableName);
-                            }
+                            _triggerUpdateCallbacks.call(this, variableName);
                         }
                         return true;
                     }
@@ -212,29 +210,34 @@ const _update = function(variableName) {
     }
 };
 
-const isNodeChild = function(node) {
+const _isNodeChild = function(node) {
     if(node.parentElement === this._rootNode) {
         return true;
     }
     if(node.parentElement === null || node.parentElement === document.body) {
         return false;
     }
-    return isNodeChild.call(this, node.parentElement);
+    return _isNodeChild.call(this, node.parentElement);
 };
+
+let _instances = new Map();
 
 //noinspection JSUnusedLocalSymbols
 export default class Component {
 
+    static getInstance(elementId) {
+        return _instances.get(elementId);
+    }
+
     constructor(rootNode, options) {
         this._rootNode = rootNode;
-        options.templateMethod = options.templateMethod === undefined ? 'auto' : options.templateMethod;
-        if ((options.templateMethod === 'auto' || options.templateMethod === 'ajax') && typeof options.template == "string" && options.template.indexOf(".") === -1) {
-            options.template += ".html";
-        }
+        options.templateMethod = options.templateMethod === undefined ? "auto" : options.templateMethod;
 
         new Promise((resolve, reject) => {
             if(options.templateMethod === "inline") {
                 resolve(options.template);
+            } else if (options.templateMethod === "children") {
+                resolve();
             } else {
                 XHRLoader.load(options.template, {cache: false}).then((template) => {
                     resolve(template);
@@ -243,12 +246,14 @@ export default class Component {
                 });
             }
         }).then((template) => {
-            this._transcludedChildren = document.createElement("div");
-            while(this._rootNode.firstChild) {
-                this._transcludedChildren.appendChild(this._rootNode.firstChild);
+            if(template !== undefined) {
+                this._transcludedChildren = document.createElement("div");
+                while (this._rootNode.firstChild) {
+                    this._transcludedChildren.appendChild(this._rootNode.firstChild);
+                }
+                this._transcludedChildren = this._transcludedChildren.childNodes;
+                this._rootNode.innerHTML += template;
             }
-            this._transcludedChildren = this._transcludedChildren.childNodes;
-            this._rootNode.innerHTML += template;
 
             this._variableUpdateCallbacks = new Map();
             this._inlineAppendedChildren = new Map();
@@ -260,6 +265,9 @@ export default class Component {
                 this.attached();
             }
 
+            if(this._rootNode.attributes.id !== undefined) {
+                _instances.set(this._rootNode.attributes.id.value, this);
+            }
         }).catch((error) => {
             if(error instanceof Error) {
                 //noinspection JSUnresolvedVariable
@@ -267,6 +275,18 @@ export default class Component {
             }
             console.error("Failed to initialize component %o", this, error);
         });
+    }
+
+    _destructor() {
+        //noinspection JSUnresolvedVariable
+        if(this.destructor instanceof Function) {
+            //noinspection JSUnresolvedFunction
+            this.destructor();
+        }
+
+        if(this._rootNode.attributes.id !== undefined && _instances.has(this._rootNode.attributes.id.value)) {
+            _instances.delete(this._rootNode.attributes.id.value);
+        }
     }
 
     getTranscludedChildren() {
@@ -291,7 +311,7 @@ export default class Component {
     updateBindings(startNode) {
         if(this._bindMapIndex.has(startNode)) {
 
-            if(!isNodeChild.call(this, startNode)) { // If not a child of the component anymore, remove from bindMap
+            if(!_isNodeChild.call(this, startNode)) { // If not a child of the component anymore, remove from bindMap
                 let bindMapKeys = this._bindMapIndex.get(startNode);
                 for(let bindMapKey of bindMapKeys) {
                     let bindMap = this._bindMap.get(bindMapKey);
@@ -303,7 +323,7 @@ export default class Component {
                 }
                 this._bindMapIndex.delete(startNode);
             }
-        } else if(isNodeChild.call(this, startNode)) {
+        } else if(_isNodeChild.call(this, startNode)) {
             let newBindMap = _buildBindMap.call(this, startNode);
 
             for(let [key, value] of newBindMap.entries()) {

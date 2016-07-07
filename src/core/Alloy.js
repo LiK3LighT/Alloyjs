@@ -1,7 +1,7 @@
-import Component from "./core/Component";
-import Attribute from "./core/Attribute";
-import StringUtils from "./core/utils/StringUtils";
-import NodeArray from "./core/utils/NodeArray";
+import Component from "./base/Component";
+import Attribute from "./base/Attribute";
+import StringUtils from "./utils/StringUtils";
+import NodeArray from "./utils/NodeArray";
 
 class Alloy {
 	static register(component) {
@@ -11,8 +11,8 @@ class Alloy {
                 this._component = new component(this);
             };
             prototype.detachedCallback = function() {
-                if(this._component.destructor instanceof Function) {
-                    this._component.destructor();
+                if(this._component._destructor instanceof Function) {
+                    this._component._destructor();
                 }
             };
             prototype.attributeChangedCallback = function(name, oldValue, newValue) {

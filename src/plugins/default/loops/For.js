@@ -28,19 +28,30 @@ class For extends Alloy.Attribute {
     }
 
     update() {
+        console.log('test');
         let from = this.component[this.fromVariable];
-        if(this.forType == FOR_TYPES.IN) {
-            for(let key in from) {
-                if(!from.hasOwnProperty(key)) continue;
+        for(let key in from) {
+            if(!from.hasOwnProperty(key)) continue;
 
-                if(!this.appendedChildren.has(key)) {
-                    let newNode = this.multipliedNode.cloneNode(true);
-                    newNode._variables = {};
+            if(!this.appendedChildren.has(key)) {
+                let newNode = this.multipliedNode.cloneNode(true);
+                newNode._variables = {};
+                if(this.forType == FOR_TYPES.IN) {
                     newNode._variables[this.toVariable] = key;
-                    this.parentNode.appendChild(newNode);
-                    this.component.updateBindings(newNode);
-                    this.appendedChildren.set(key, newNode);
+                } else {
+                    newNode._variables[this.toVariable] = from[key];
                 }
+                this.parentNode.appendChild(newNode);
+                this.component.updateBindings(newNode);
+                this.appendedChildren.set(key, newNode);
+            }
+        }
+        for(let key of this.appendedChildren.keys()) {
+            if(!from.hasOwnProperty(key)) {
+                let nodeToRemove = this.appendedChildren.get(key);
+                this.component.updateBindings(nodeToRemove);
+                nodeToRemove.remove();
+                this.appendedChildren.delete(key);
             }
         }
     }

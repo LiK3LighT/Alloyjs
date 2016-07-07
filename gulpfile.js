@@ -3,7 +3,7 @@ const CONFIG = {
     OUT_PATH: "dist",
     OUT_FILENAME: "alloy.js",
     MODULE_NAME: "Alloy",
-    SRC_PATH: "src"
+    SRC_PATH: "src/core"
 };
 CONFIG.TEMP_PATH = CONFIG.OUT_PATH+"/temp";
 

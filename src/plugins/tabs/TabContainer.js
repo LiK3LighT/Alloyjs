@@ -4,7 +4,7 @@ class TabContainer extends Alloy.Component {
 
     constructor(rootNode) {
         super(rootNode, {
-            template: "<div class='controls'><a for='let key in this.titles'>${this.titles[key]}</a></div>${this.panes}",
+            template: "<div class='controls'><a for='let title of this.titles'>${title}</a></div>${this.panes}",
             templateMethod: "inline"
         });
     }
