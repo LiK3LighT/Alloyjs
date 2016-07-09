@@ -146,8 +146,6 @@ const _evaluateAttributeHandlers = function(startNode) {
 const _update = function(variableName) {
     if(!this._bindMap.has(variableName)) return;
 
-    //console.log(variableName, this._bindMap.get(variableName));
-
     for(let value of this._bindMap.get(variableName)) { // Loop through all nodes in which the variable that triggered the update is used in
         let nodeToUpdate = value[0]; // The node in which the variable that triggered the update is in, the text can already be overritten by the evaluation of evalText
         let evalText = value[1]; // Could contain multiple variables, but always the variable that triggered the update which is variableName
@@ -156,6 +154,8 @@ const _update = function(variableName) {
         let htmlNodeToUpdate;
         if(nodeToUpdate instanceof CharacterData) {
             htmlNodeToUpdate = nodeToUpdate.parentElement;
+        } else if(nodeToUpdate instanceof Attr) {
+            htmlNodeToUpdate = nodeToUpdate.ownerElement;
         } else {
             htmlNodeToUpdate = nodeToUpdate;
         }
@@ -164,7 +164,7 @@ const _update = function(variableName) {
 
         for(let variablesVariableName of value[2]) {
             if(this[variablesVariableName] instanceof NodeList || this[variablesVariableName] instanceof NodeArray || this[variablesVariableName] instanceof HTMLElement) {
-                evalText = evalText.replace(new RegExp("\\${\\s*this\\." + variablesVariableName + "\\s*}", "g"), ""); // Remove already as node identified and evaluated variabled from evalText
+                evalText = evalText.replace(new RegExp("\\${\\s*this\\." + variablesVariableName + "\\s*}", "g"), ""); // Remove already as node identified and evaluated variables from evalText
                 if(variableName === variablesVariableName) {
                     if(!this._inlineAppendedChildren.has(variablesVariableName)) {
                         this._inlineAppendedChildren.set(variablesVariableName, []);
@@ -188,6 +188,7 @@ const _update = function(variableName) {
                 }
             }
         }
+
         if(!(nodeToUpdate instanceof HTMLElement)) {
             let evaluated;
             try {
@@ -259,6 +260,7 @@ export default class Component {
             this._inlineAppendedChildren = new Map();
             this._bindMapIndex = new Map();
             this._bindMap = _buildBindMap.call(this, this._rootNode);
+            //console.log(this._bindMap);
             _evaluateAttributeHandlers.call(this, this._rootNode);
 
             if(this.attached instanceof Function) {

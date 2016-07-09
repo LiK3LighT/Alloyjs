@@ -15,7 +15,6 @@ class For extends Alloy.Attribute {
         this.parentNode = this.multipliedNode.parentNode;
         this.parentNode.removeChild(this.multipliedNode);
 
-
         this.component.updateBindings(this.multipliedNode);
 
         this.appendedChildren = new Map();
@@ -28,7 +27,7 @@ class For extends Alloy.Attribute {
     }
 
     update() {
-        console.log('test');
+        //console.log('test');
         let from = this.component[this.fromVariable];
         for(let key in from) {
             if(!from.hasOwnProperty(key)) continue;
