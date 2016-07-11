@@ -200,7 +200,7 @@ const _update = function(variableName) {
                 }
                 evaluated = eval(variableDeclarationString + "`" + evalText + "`");
             } catch(error) {
-                console.error(error, evalText);
+                console.error(error, evalText, "on node", nodeToUpdate);
             }
             if (nodeToUpdate instanceof CharacterData) {
                 nodeToUpdate.textContent = evaluated;
