@@ -3,9 +3,19 @@ import Attribute from "./base/Attribute";
 import StringUtils from "./utils/StringUtils";
 import NodeArray from "./utils/NodeArray";
 
+let _isPrototypeOf = function(object, prototype) {
+    if(object.__proto__ === prototype) {
+        return true;
+    } else if(object.__proto__ != null) {
+        return _isPrototypeOf(object.__proto__, prototype);
+    } else {
+        return false;
+    }
+};
+
 class Alloy {
 	static register(component) {
-        if(component.__proto__ === Component) {
+        if(_isPrototypeOf(component, Component)) {
             let prototype = Object.create(HTMLElement.prototype);
             prototype.createdCallback = function() {
                 this._component = new component(this);
@@ -24,7 +34,7 @@ class Alloy {
             let dashedName = StringUtils.toDashed(component.name);
             window[component.name] = document.registerElement(dashedName, {prototype: prototype});
             //Alloy._registeredComponents.add(dashedName);
-        } else if(component.__proto__ === Attribute) {
+        } else if(_isPrototypeOf(component, Attribute)) {
             Alloy._registeredAttributes.set(StringUtils.toDashed(component.name), component);
         }
     }

@@ -34,7 +34,7 @@ class For extends Alloy.Attribute {
 
             if(!this.appendedChildren.has(key)) {
                 let newNode = this.multipliedNode.cloneNode(true);
-                newNode._variables = {};
+                newNode._variables = Object.create(null);
                 if(this.forType == FOR_TYPES.IN) {
                     newNode._variables[this.toVariable] = key;
                 } else {

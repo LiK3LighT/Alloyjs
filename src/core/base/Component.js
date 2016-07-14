@@ -193,9 +193,8 @@ const _update = function(variableName) {
             let evaluated;
             try {
                 let variableDeclarationString = "";
-                for(let declaredVariableName in htmlNodeToUpdate._variables) {
-                    if(!htmlNodeToUpdate._variables.hasOwnProperty(declaredVariableName)) continue;
-
+                for(let declaredVariableName in htmlNodeToUpdate._variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
+                    //noinspection JSUnfilteredForInLoop
                     variableDeclarationString += "let " + declaredVariableName + "=" + JSON.stringify(htmlNodeToUpdate._variables[declaredVariableName])+";";
                 }
                 evaluated = eval(variableDeclarationString + "`" + evalText + "`");
@@ -311,6 +310,8 @@ export default class Component {
     }
 
     updateBindings(startNode) {
+        _evaluateAttributeHandlers.call(this, startNode);
+
         if(this._bindMapIndex.has(startNode)) {
 
             if(!_isNodeChild.call(this, startNode)) { // If not a child of the component anymore, remove from bindMap
