@@ -1,4 +1,4 @@
-"use strict";
+import Alloy from "../../../core/Alloy";
 
 const FOR_TYPES = {
     OF: "of",

@@ -1,4 +1,4 @@
-import XHRLoader from "./../utils/ajax-loaders/XHRLoader";
+import XHRProvider from "./../utils/data-providers/XHRProvider";
 import Alloy from "../Alloy";
 import NodeArray from "./../utils/NodeArray";
 
@@ -239,7 +239,7 @@ export default class Component {
             } else if (options.templateMethod === "children") {
                 resolve();
             } else {
-                XHRLoader.load(options.template, {cache: false}).then((template) => {
+                XHRProvider.load(options.template, null, {cache: options.cache, version: options.version}).then((template) => {
                     resolve(template);
                 }).catch((error) => {
                     reject(error);

@@ -2,7 +2,7 @@ import IndexedDB from "../indexed-db/IndexedDB";
 
 export default class Cache {
     static get(url, version) {
-        version = version || 1;
+        version = (version !== undefined ? version : 0);
         return new Promise((resolve, reject) => {
             if(Cache.memory[url]) {
                 resolve(Cache.memory[url]);
@@ -14,13 +14,13 @@ export default class Cache {
             }).catch((error) => {
                 if(error !== undefined) console.warn("Failed to retrieve resource from IndexedDB", error);
 
-                reject();
+                reject(error);
             });
         });
     }
 
     static set(url, data, version) {
-        version = version || 1;
+        version = (version !== undefined ? version : 0);
         Cache.memory[url] = data;
         Cache.indexedDB.set(url, data, version);
     }

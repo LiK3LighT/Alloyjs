@@ -2,6 +2,7 @@ import Component from "./base/Component";
 import Attribute from "./base/Attribute";
 import StringUtils from "./utils/StringUtils";
 import NodeArray from "./utils/NodeArray";
+import XHRProvider from "./utils/data-providers/XHRProvider";
 
 let _isPrototypeOf = function(object, prototype) {
     if(object.__proto__ === prototype) {
@@ -48,5 +49,6 @@ Alloy._registeredAttributes = new Map();
 Alloy.Component = Component;
 Alloy.Attribute = Attribute;
 Alloy.NodeArray = NodeArray;
+Alloy.XHRProvider = XHRProvider;
 
 export default Alloy;

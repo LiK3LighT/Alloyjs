@@ -1,3 +1,5 @@
+import GenericEvent from "GenericEvent";
+
 class Onclick extends GenericEvent {
 
     constructor(attributeNode) {
