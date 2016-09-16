@@ -24,7 +24,9 @@ const _buildSetterVariable = function(variableName) {
             return this["__" + variableName];
         },
         set: (newValue) => {
-            if(newValue instanceof Object) {
+            if(newValue instanceof NodeList) {
+                throw new Error("Adding a variable of type NodeList is not supported, please first convert to NodeArray by using new Alloy.NodeArray(nodeList)");
+            } else if(!(newValue instanceof NodeArray) && !(newValue instanceof Node) && newValue instanceof Object) {
                 const proxyTemplate = {
                     get: (target, property) => {
                         return target[property];
@@ -163,27 +165,16 @@ const _update = function(variableName) {
         if(htmlNodeToUpdate.parentElement === null) continue; // Skip nodes that are not added to the visible dom
 
         for(let variablesVariableName of value[2]) {
-            if(this[variablesVariableName] instanceof NodeList || this[variablesVariableName] instanceof NodeArray || this[variablesVariableName] instanceof HTMLElement) {
+            if(this[variablesVariableName] instanceof NodeArray || this[variablesVariableName] instanceof HTMLElement) {
                 evalText = evalText.replace(new RegExp("\\${\\s*this\\." + variablesVariableName + "\\s*}", "g"), ""); // Remove already as node identified and evaluated variables from evalText
                 if(variableName === variablesVariableName) {
-                    if(!this._inlineAppendedChildren.has(variablesVariableName)) {
-                        this._inlineAppendedChildren.set(variablesVariableName, []);
-                    }
-                    let appendedChildren = this._inlineAppendedChildren.get(variablesVariableName);
-                    if(appendedChildren.length > 0) {
-                        for(let child of appendedChildren) {
-                            child.remove();
-                        }
-                    }
-                    if(this[variablesVariableName] instanceof NodeList || this[variablesVariableName] instanceof NodeArray) {
+                    if(this[variablesVariableName] instanceof NodeArray) {
                         for(let i = 0, length = this[variablesVariableName].length; i < length; i++) {
-                            let node = this[variablesVariableName][i].cloneNode(true);
+                            let node = this[variablesVariableName][i];
                             htmlNodeToUpdate.appendChild(node);
-                            appendedChildren.push(node);
                         }
                     } else {
                         htmlNodeToUpdate.appendChild(this[variablesVariableName]);
-                        appendedChildren.push(this[variablesVariableName]);
                     }
                 }
             }
@@ -251,12 +242,11 @@ export default class Component {
                 while (this._rootNode.firstChild) {
                     this._transcludedChildren.appendChild(this._rootNode.firstChild);
                 }
-                this._transcludedChildren = this._transcludedChildren.childNodes;
+                this._transcludedChildren = new NodeArray(this._transcludedChildren.childNodes);
                 this._rootNode.innerHTML += template;
             }
 
             this._variableUpdateCallbacks = new Map();
-            this._inlineAppendedChildren = new Map();
             this._bindMapIndex = new Map();
             this._bindMap = _buildBindMap.call(this, this._rootNode);
             //console.log(this._bindMap);
