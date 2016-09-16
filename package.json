@@ -3,22 +3,16 @@
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LiK3LighT/Alloyjs.git"
+    "url": "git+https://github.com/koenig-dominik/Alloyjs.git"
   },
-  "author": "https://github.com/LiK3LighT",
+  "author": "https://github.com/koenig-dominik",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/LiK3LighT/Alloyjs/issues"
+    "url": "https://github.com/koenig-dominik/Alloyjs/issues"
   },
-  "homepage": "https://github.com/LiK3LighT/Alloyjs#readme",
+  "homepage": "https://github.com/koenig-dominik/Alloyjs#readme",
   "devDependencies": {
     "babel-plugin-transform-es2015-modules-commonjs": "^6.10.3",
     "browserify": "^13.0.1",
