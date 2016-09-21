@@ -31,6 +31,9 @@ class Alloy {
                     this._component.attributeChanged(name, oldValue, newValue);
                 }
             };
+            prototype.cloneNode = function() {
+                return this._component.cloneNode(this.constructor);
+            };
 
             let dashedName = StringUtils.toDashed(component.name);
             window[component.name] = document.registerElement(dashedName, {prototype: prototype});

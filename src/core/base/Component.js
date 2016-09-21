@@ -349,4 +349,17 @@ export default class Component {
         }
     }
 
+    cloneNode(component) {
+        let rootNode = document.createElement("div");
+        let transcludedChildren = this.getTranscludedChildren();
+        for(let child of transcludedChildren) {
+            rootNode.appendChild(child.cloneNode(true));
+        }
+
+        let holderNode = document.createElement("div");
+        holderNode.innerHTML = "<"+component.name+">" + rootNode.innerHTML + "</"+component.name+">";
+
+        return holderNode.childNodes[0];
+    }
+
 }
