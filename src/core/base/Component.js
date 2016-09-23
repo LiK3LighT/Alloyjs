@@ -24,9 +24,7 @@ const _buildSetterVariable = function(variableName) {
             return this["__" + variableName];
         },
         set: (newValue) => {
-            if(newValue instanceof NodeList) {
-                throw new Error("Adding a variable of type NodeList is not supported, please first convert to NodeArray by using new Alloy.NodeArray(nodeList)");
-            } else if(!(newValue instanceof NodeArray) && !(newValue instanceof Node) && newValue instanceof Object) {
+            if(newValue.constructor === Object) {
                 const proxyTemplate = {
                     get: (target, property) => {
                         return target[property];
@@ -278,6 +276,14 @@ export default class Component {
         if(this._rootNode.attributes.id !== undefined && _instances.has(this._rootNode.attributes.id.value)) {
             _instances.delete(this._rootNode.attributes.id.value);
         }
+    }
+
+    getAttributes() {
+        return this._rootNode.attributes;
+    }
+
+    getAttributeValue(name) {
+        return this._rootNode.attributes.getNamedItem(name).nodeValue;
     }
 
     getTranscludedChildren() {
