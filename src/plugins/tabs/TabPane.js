@@ -1,5 +1,3 @@
-"use strict";
-
 class TabPane extends Alloy.Component {
 
     constructor(rootNode) {

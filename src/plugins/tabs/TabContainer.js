@@ -1,5 +1,3 @@
-"use strict";
-
 class TabContainer extends Alloy.Component {
 
     constructor(rootNode) {

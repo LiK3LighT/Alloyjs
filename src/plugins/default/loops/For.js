@@ -27,7 +27,6 @@ class For extends Alloy.Attribute {
     }
 
     update() {
-        //console.log('test');
         let from = this.component[this.fromVariable];
         for(let key in from) {
             if(!from.hasOwnProperty(key)) continue;

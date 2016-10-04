@@ -24,7 +24,7 @@ const _buildSetterVariable = function(variableName) {
             return this["__" + variableName];
         },
         set: (newValue) => {
-            if(newValue.constructor === Object) {
+            if(newValue.constructor === Object || newValue instanceof Array) {
                 const proxyTemplate = {
                     get: (target, property) => {
                         return target[property];
@@ -97,7 +97,7 @@ const _buildBindMap = function(startNode) {
 
     let nodeList = startNode.childNodes;
     for (let i = 0, node; node = nodeList[i]; i++) {
-        if(!(node instanceof CharacterData) && node._component !== undefined) { // TODO: Performance improvement: Somehow check if it's possible also to exclude future components...
+        if(!(node instanceof CharacterData)) {
             continue;
         }
         let newBindMap = _buildBindMap.call(this, node);
@@ -128,7 +128,7 @@ const _buildBindMap = function(startNode) {
     return bindMap;
 };
 
-const _evaluateAttributeHandlers = function(startNode) {
+const _evaluateAttributeHandlers = function(startNode) { // Creates instances of specific attribute classes into the attribute node itself.
     if(startNode.attributes !== undefined) {
         for (let j = 0, attributeNode; attributeNode = startNode.attributes[j]; j++) {
             if(Alloy._registeredAttributes.has(attributeNode.name)) {
