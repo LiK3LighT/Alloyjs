@@ -97,7 +97,7 @@ const _buildBindMap = function(startNode) {
 
     let nodeList = startNode.childNodes;
     for (let i = 0, node; node = nodeList[i]; i++) {
-        if(!(node instanceof CharacterData)) {
+        if(!(node instanceof CharacterData) && node._component !== undefined) { // TODO: Performance improvement: Somehow check if it's possible also to exclude future components...
             continue;
         }
         let newBindMap = _buildBindMap.call(this, node);

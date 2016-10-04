@@ -2,14 +2,14 @@ class TabContainer extends Alloy.Component {
 
     constructor(rootNode) {
         super(rootNode, {
-            template: "<div class='controls' onclick='this.test();'><a for='let key in this.titles' onclick='this.select(this.panes[key]);'>${this.titles[key]}</a></div>${this.panes}",
+            template: "<div class='controls'><a for='let key in this.titles' onclick='this.select(this.panes[key]);'>${this.titles[key]}</a></div>${this.panes}",
             templateMethod: "inline"
         });
     }
 
     attached() {
         this.titles = [];
-        this.panes = (new Alloy.NodeArray(this.getTranscludedChildren())).filter((node) => {
+        this.panes = this.getTranscludedChildren().filter((node) => {
             if(node._component instanceof TabPane) {
                 return true;
             }
@@ -25,12 +25,9 @@ class TabContainer extends Alloy.Component {
         }
     }
 
-    test() {
-        console.log('blah')
-    }
-
-    select(a) {
-        console.log(a);
+    select(pane) {
+        console.log(pane);
+        console.log(this);
     }
 
 }
