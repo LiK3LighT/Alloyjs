@@ -1,4 +1,5 @@
-import GenericEvent from "GenericEvent";
+import Alloy from "../../../core/Alloy";
+import GenericEvent from "./GenericEvent";
 
 class Onclick extends GenericEvent {
 

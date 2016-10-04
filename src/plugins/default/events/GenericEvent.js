@@ -1,6 +1,6 @@
 import Alloy from "../../../core/Alloy";
 
-let _getScopeVariables = function(node) {
+const _getScopeVariables = function(node) {
     if(node._variables) {
         return node._variables;
     } else if(node._component) {

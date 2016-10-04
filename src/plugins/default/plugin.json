@@ -1,6 +1,6 @@
 {
   "entries": [
-    "events/GenericEvent",
+    "events/Onclick",
     "loops/For"
   ]
 }

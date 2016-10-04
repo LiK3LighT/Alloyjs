@@ -2,7 +2,7 @@ class TabContainer extends Alloy.Component {
 
     constructor(rootNode) {
         super(rootNode, {
-            template: "<div class='controls'><a for='let key in this.titles' onclick='this.select(this.panes[key]);'>${this.titles[key]}</a></div>${this.panes}",
+            template: "<div class='controls' onclick='this.test();'><a for='let key in this.titles' onclick='this.select(this.panes[key]);'>${this.titles[key]}</a></div>${this.panes}",
             templateMethod: "inline"
         });
     }
@@ -23,6 +23,10 @@ class TabContainer extends Alloy.Component {
                 this.titles[this.titles.length] = node.title;
             }
         }
+    }
+
+    test() {
+        console.log('blah')
     }
 
     select(a) {
