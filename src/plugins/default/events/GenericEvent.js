@@ -12,7 +12,7 @@ const _getScopeVariables = function(node) {
     return null;
 };
 
-export default class GenericEvent extends Alloy.Attribute {
+export default class GenericEvent extends Alloy.Attribute { // TODO make this really generic... no .onclick stuff etc.
 
     constructor(attributeNode) {
         super(attributeNode);
@@ -34,7 +34,7 @@ export default class GenericEvent extends Alloy.Attribute {
 
         attributeNode.ownerElement.onclick = function(event) {
             let variableValues = [event];
-            for(let declaredVariableName in variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
+            for (let declaredVariableName in variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
                 //noinspection JSUnfilteredForInLoop
                 variableValues[variableValues.length] = variables[declaredVariableName];
             }

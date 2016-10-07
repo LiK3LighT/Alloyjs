@@ -50,88 +50,78 @@ const _buildSetterVariable = function(variableName) {
     });
 };
 
-const _setupMappingForNode = function(node, text, bindMap) {
-    let evalMatchRegExp = /\${([^}]*)}/g;
-    let alreadyBound = new Set();
+
+const evalMatchRegExp = /\${([^}]*)}/g;
+const variablesRegExp = /\s*this\.([a-zA-Z0-9_$]+)\s*/g;
+const _callForVariablesInText = function(text, callback) {
     let evalMatch;
-    let variables = new Set();
+    evalMatchRegExp.lastIndex = 0; // Reset the RegExp, better performance than recreating it every time
     while (evalMatch = evalMatchRegExp.exec(text)) {
-        let variablesRegExp = /\s*this\.([a-zA-Z0-9_\$]+)\s*/g;
         let variableMatch;
+        variablesRegExp.lastIndex = 0; // Reset the RegExp, better performance than recreating it every time
+
+        let variables = new Set();
         while (variableMatch = variablesRegExp.exec(evalMatch[1])) {
             variables.add(variableMatch[1]);
         }
 
-        for(let variableName of variables){
-            if(!alreadyBound.has(variableName)) {
-                alreadyBound.add(variableName);
-                if (!bindMap.has(variableName)) {
-                    bindMap.set(variableName, []);
-                }
-                let bindAttributes = bindMap.get(variableName);
-                bindAttributes.push([node, text, variables]);
-
-                if (Object.getOwnPropertyDescriptor(this, variableName) === undefined || Object.getOwnPropertyDescriptor(this, variableName).set === undefined) {
-                    _buildSetterVariable.call(this, variableName);
-                }
-            }
-        }
-
-
+        callback(variables);
     }
 };
 
-const _buildBindMap = function(startNode) {
-    let bindMap = new Map();
-
+const _recurseTextNodes = function(startNode, callback) {
     if(startNode instanceof CharacterData && startNode.textContent !== "") {
-        _setupMappingForNode.call(this, startNode, startNode.textContent, bindMap);
+        callback.call(this, startNode, startNode.textContent);
     }
     if(startNode.attributes !== undefined) {
         for (let j = 0, attributeNode; attributeNode = startNode.attributes[j]; j++) {
             if(attributeNode.value != "") {
-                _setupMappingForNode.call(this, attributeNode, attributeNode.value, bindMap);
+                callback.call(this, attributeNode, attributeNode.value);
             }
         }
     }
 
     let nodeList = startNode.childNodes;
     for (let i = 0, node; node = nodeList[i]; i++) {
-        if(!(node instanceof CharacterData) && node._component !== undefined) { // TODO: Performance improvement: Somehow check if it's possible also to exclude future components...
+        if (!(node instanceof CharacterData)) {
             continue;
         }
-        let newBindMap = _buildBindMap.call(this, node);
-        for(let [key, value] of newBindMap.entries()) {
-            //noinspection JSUnusedAssignment,SillyAssignmentJS
-            key = key; // Just for the silly warnings...
-            //noinspection JSUnusedAssignment,SillyAssignmentJS
-            value = value; // Just for the silly warnings...
+        _recurseTextNodes.call(this, node, callback);
+    }
+};
 
-            if(!bindMap.has(key)) {
-                bindMap.set(key, value);
-            } else {
-                let bindValues = bindMap.get(key);
-                bindValues = bindValues.concat(value);
-                bindMap.set(key, bindValues);
-            }
-
-            for(let j = 0, item; item = value[j]; j++) {
-                if(!this._bindMapIndex.has(item[0])) {
-                    this._bindMapIndex.set(item[0], new Set());
+const _setupBindMapForNode = function(node, text) {
+    let alreadyBoundForNode = new Set();
+    _callForVariablesInText(text, (variables) => {
+        for(let variableName of variables){
+            if(!alreadyBoundForNode.has(variableName)) {
+                alreadyBoundForNode.add(variableName);
+                if (!this._bindMap.has(variableName)) {
+                    this._bindMap.set(variableName, []);
                 }
-                let entries = this._bindMapIndex.get(item[0]);
-                entries.add(key);
+                let bindAttributes = this._bindMap.get(variableName);
+                bindAttributes.push([node, text, variables]);
+
+                if(!this._bindMapIndex.has(node)) {
+                    this._bindMapIndex.set(node, new Set());
+                }
+                let bindMapIndexEntries = this._bindMapIndex.get(node);
+                bindMapIndexEntries.add(variableName);
+
+                if (Object.getOwnPropertyDescriptor(this, variableName) === undefined || Object.getOwnPropertyDescriptor(this, variableName).set === undefined) {
+                    _buildSetterVariable.call(this, variableName);
+                }
             }
         }
-    }
-
-    return bindMap;
+    });
 };
+
+// TODO: Performance save evaluated function objects in the bind mapping and just call these instead of evaluating the functions with every update
 
 const _evaluateAttributeHandlers = function(startNode) { // Creates instances of specific attribute classes into the attribute node itself.
     if(startNode.attributes !== undefined) {
         for (let j = 0, attributeNode; attributeNode = startNode.attributes[j]; j++) {
-            if(Alloy._registeredAttributes.has(attributeNode.name)) {
+            if(Alloy._registeredAttributes.has(attributeNode.name) && attributeNode._alloyAttribute === undefined) {
                 attributeNode._alloyComponent = this;
                 attributeNode._alloyAttribute = new (Alloy._registeredAttributes.get(attributeNode.name))(attributeNode);
             }
@@ -199,14 +189,14 @@ const _update = function(variableName) {
     }
 };
 
-const _isNodeChild = function(node) {
-    if(node.parentElement === this._rootNode) {
+const _isNodeChildOf = function(parent, child) {
+    if(child.parentElement === parent) {
         return true;
     }
-    if(node.parentElement === null || node.parentElement === document.body) {
+    if(child.parentElement === null || child.parentElement === document.body) {
         return false;
     }
-    return _isNodeChild.call(this, node.parentElement);
+    return _isNodeChildOf(parent, child.parentElement);
 };
 
 let _instances = new Map();
@@ -214,6 +204,7 @@ let _instances = new Map();
 //noinspection JSUnusedLocalSymbols
 export default class Component {
 
+    //noinspection JSUnusedGlobalSymbols
     static getInstance(elementId) {
         return _instances.get(elementId);
     }
@@ -246,9 +237,10 @@ export default class Component {
 
             this._variableUpdateCallbacks = new Map();
             this._bindMapIndex = new Map();
-            this._bindMap = _buildBindMap.call(this, this._rootNode);
-            //console.log(this._bindMap);
-            _evaluateAttributeHandlers.call(this, this._rootNode);
+            this._bindMap = new Map();
+            //this._bindMap = _buildBindMap.call(this, this._rootNode);
+            //_evaluateAttributeHandlers.call(this, this._rootNode);
+            this.updateBindings(this._rootNode);
 
             if(this.attached instanceof Function) {
                 this.attached();
@@ -278,10 +270,12 @@ export default class Component {
         }
     }
 
+    //noinspection JSUnusedGlobalSymbols
     getAttributes() {
         return this._rootNode.attributes;
     }
 
+    //noinspection JSUnusedGlobalSymbols
     getAttributeValue(name) {
         return this._rootNode.attributes.getNamedItem(name).nodeValue;
     }
@@ -300,6 +294,7 @@ export default class Component {
         _buildSetterVariable.call(this, variableName);
     }
 
+    //noinspection JSUnusedGlobalSymbols
     removeUpdateCallback(variableName, callback) {
         let updateCallbacks = this._variableUpdateCallbacks.get(variableName);
         updateCallbacks.splice(updateCallbacks.indexOf(callback), 1);
@@ -308,9 +303,9 @@ export default class Component {
     updateBindings(startNode) {
         _evaluateAttributeHandlers.call(this, startNode);
 
-        if(this._bindMapIndex.has(startNode)) {
+        if(this._bindMapIndex.has(startNode)) { // if node was already evaluated
 
-            if(!_isNodeChild.call(this, startNode)) { // If not a child of the component anymore, remove from bindMap
+            if(!_isNodeChildOf(this._rootNode, startNode)) { // If not a child of the component anymore, remove from bindMap
                 let bindMapKeys = this._bindMapIndex.get(startNode);
                 for(let bindMapKey of bindMapKeys) {
                     let bindMap = this._bindMap.get(bindMapKey);
@@ -322,31 +317,10 @@ export default class Component {
                 }
                 this._bindMapIndex.delete(startNode);
             }
-        } else if(_isNodeChild.call(this, startNode)) {
-            let newBindMap = _buildBindMap.call(this, startNode);
-
-            for(let [key, value] of newBindMap.entries()) {
-                //noinspection JSUnusedAssignment,SillyAssignmentJS
-                key = key; // Just for the silly warnings...
-                //noinspection JSUnusedAssignment,SillyAssignmentJS
-                value = value; // Just for the silly warnings...
-
-                if(!this._bindMap.has(key)) {
-                    this._bindMap.set(key, value);
-                } else {
-                    let oldBindValues = this._bindMap.get(key);
-                    outerBindValueLoop:
-                    for(let j = 0, newBindValue; newBindValue = value[j]; j++) {
-                        for(let i = 0, oldBindValue; oldBindValue = oldBindValues[i]; i++) {
-                            if(oldBindValue === newBindValue) {
-                                continue outerBindValueLoop;
-                            }
-                        }
-
-                        oldBindValues[oldBindValues.length] = newBindValue;
-                    }
-                }
-            }
+        } else if(_isNodeChildOf(this._rootNode, startNode)) { // If this node is not already bound
+            _recurseTextNodes.call(this, startNode, (node, text) => {
+                _setupBindMapForNode.call(this, node, text);
+            });
         }
 
         let nodeList = startNode.childNodes;
