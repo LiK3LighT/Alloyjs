@@ -90,6 +90,7 @@ const _recurseTextNodes = function(startNode, callback) {
     }
 };
 
+// TODO: Performance save evaluated function objects in the bind mapping and just call these instead of evaluating the functions with every update
 const _setupBindMapForNode = function(node, text) {
     let alreadyBoundForNode = new Set();
     _callForVariablesInText(text, (variables) => {
@@ -115,8 +116,6 @@ const _setupBindMapForNode = function(node, text) {
         }
     });
 };
-
-// TODO: Performance save evaluated function objects in the bind mapping and just call these instead of evaluating the functions with every update
 
 const _evaluateAttributeHandlers = function(startNode) { // Creates instances of specific attribute classes into the attribute node itself.
     if(startNode.attributes !== undefined) {
