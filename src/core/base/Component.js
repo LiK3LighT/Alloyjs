@@ -337,7 +337,7 @@ export default class Component {
         }
 
         let holderNode = document.createElement("div");
-        holderNode.innerHTML = "<"+component.name+">" + rootNode.innerHTML + "</"+component.name+">";
+        holderNode.innerHTML = "<"+component.name+">" + rootNode.innerHTML + "</"+component.name+">"; // TODO: add the attributes here...
 
         return holderNode.childNodes[0];
     }
