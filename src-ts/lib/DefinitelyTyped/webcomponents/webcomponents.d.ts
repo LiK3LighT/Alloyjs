@@ -46,6 +46,12 @@ declare module "webcomponents.js" {
     export = webcomponents;
 }
 
+interface HTMLElement {
+    createdCallback():void;
+    detachedCallback():void;
+    attributeChangedCallback(name: string, oldValue:string, newValue:string):void;
+}
+
 interface Element {
     createShadowRoot(): webcomponents.ShadowRootPolyfill;
     shadowRoot?: webcomponents.ShadowRootPolyfill;

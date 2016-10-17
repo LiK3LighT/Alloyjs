@@ -1,28 +1,37 @@
-interface Element {
-    _variables: Object;
-}
+import * as Alloy from "../../Alloy"
 
 const FOR_TYPES = {
     OF: "of",
     IN: "in"
 };
 
-class For extends Alloy.Attribute {
+export class For extends Alloy.Attribute {
 
     private multipliedElement:Element;
     private parentNode:Node;
     private forType:string;
     private toVariable:string;
     private fromVariable:string;
-    private component:Alloy.Component;
 
     private appendedChildren = new Map();
+
+    public static getScopeVariables(element:Element) {
+        if(element._variables) {
+            return element._variables;
+        } else if(element._component) {
+            return null;
+        }
+        if(element.parentElement !== null) {
+            return this.getScopeVariables(element.parentElement);
+        }
+        return null;
+    }
 
     constructor(attributeAttr:Attr) {
         super(attributeAttr);
 
         this.multipliedElement = attributeAttr.ownerElement;
-        this.multipliedElement.attributes.removeNamedItem("for");
+        this.multipliedElement.removeAttribute("for");
         this.parentNode = this.multipliedElement.parentNode;
         this.parentNode.removeChild(this.multipliedElement);
 

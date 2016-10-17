@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "removeComments": true,
+    "sourceMap": true,
+    "module": "commonjs"
+  },
+  "include": [
+    "../../src-ts/**/*.ts",
+    "./**/*.ts"
+  ]
+
+}

@@ -1,26 +1,13 @@
-import Alloy from "../../../core/Alloy";
+import * as Alloy from "../../Alloy"
+import {For} from "../loops/For"
 
-const _getScopeVariables = function(node) {
-    if(node._variables) {
-        return node._variables;
-    } else if(node._component) {
-        return null;
-    }
-    if(node.parentElement !== null) {
-        return _getScopeVariables(node.parentElement);
-    }
-    return null;
-};
-
-export default class GenericEvent extends Alloy.Attribute { // TODO make this really generic... no .onclick stuff etc.
+export class GenericEvent extends Alloy.Attribute { // TODO make this really generic... no .onclick stuff etc.
 
     constructor(attributeNode) {
         super(attributeNode);
 
-        let component = this._component;
-
-        let variables = _getScopeVariables(attributeNode.ownerElement);
-
+        let component = this.getComponent();
+        let variables = For.getScopeVariables(attributeNode.ownerElement);
         let originalFunction = attributeNode.ownerElement.onclick;
 
         let variableNames = ["event"];

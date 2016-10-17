@@ -1,16 +1,16 @@
-namespace Alloy.Utils {
+export class NodeUtils {
 
-    export function isNodeChildOf(parent:Node, child:Node) {
+    static isNodeChildOf(parent:Node, child:Node) {
         if(child.parentElement === parent) {
             return true;
         }
         if(child.parentElement === null || child.parentElement === document.body) {
             return false;
         }
-        return isNodeChildOf(parent, child.parentElement);
+        return this.isNodeChildOf(parent, child.parentElement);
     }
 
-    export function recurseTextNodes(startNode:Node, callback:(attributeNode:Node, text:string) => any) {
+    static recurseTextNodes(startNode:Node, callback:(attributeNode:Node, text:string) => any) {
         if(startNode instanceof CharacterData && startNode.textContent !== "") {
             callback(startNode, startNode.textContent);
         }
@@ -27,7 +27,7 @@ namespace Alloy.Utils {
             if (!(node instanceof CharacterData)) {
                 continue;
             }
-            recurseTextNodes(node, callback);
+            this.recurseTextNodes(node, callback);
         }
     }
 
