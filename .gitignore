@@ -6,9 +6,9 @@
 node_modules/
 dist/temp/
 
-src-ts/**/*.js
-src-ts/**/*.map
+src/**/*.js
+src/**/*.map
 
-test-ts/**/*.js
-test-ts/**/*.map
+test/**/*.js
+test/**/*.map
 !webpack.config.js

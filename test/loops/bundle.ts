@@ -1,0 +1,2 @@
+import "./TestComponent"
+import "./LoopedComponent"

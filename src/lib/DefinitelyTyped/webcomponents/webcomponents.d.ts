@@ -7,18 +7,14 @@ declare namespace webcomponents {
 
     export interface CustomElementInit {
         prototype: HTMLElement;
-        extends?: string;
     }
 
-    export interface CustomElementConstructor {
-        new(): HTMLElement;
+    export interface CustomElementOptions {
+        extends:string;
     }
 
-    export interface CustomElementsPolyfill {
-        hasNative: boolean;
-        flags: any;
-        ready: boolean;
-        useNative: boolean;
+    export interface CustomElementRegistryPolyfill {
+        define(tagName:string, element:CustomElementInit, options?:CustomElementOptions): void;
     }
 
     export interface HTMLImportsPolyfill {
@@ -46,23 +42,15 @@ declare module "webcomponents.js" {
     export = webcomponents;
 }
 
-interface HTMLElement {
-    createdCallback():void;
-    detachedCallback():void;
-    attributeChangedCallback(name: string, oldValue:string, newValue:string):void;
-}
-
 interface Element {
     createShadowRoot(): webcomponents.ShadowRootPolyfill;
     shadowRoot?: webcomponents.ShadowRootPolyfill;
 }
 
-interface Document {
-    registerElement(name: string, prototype: webcomponents.CustomElementInit): webcomponents.CustomElementConstructor;
-}
-
 interface Window {
-    CustomElements: webcomponents.CustomElementsPolyfill;
+    CustomElementRegistry: webcomponents.CustomElementRegistryPolyfill;
     HTMLImports: webcomponents.HTMLImportsPolyfill;
     WebComponents: webcomponents.Polyfill;
 }
+
+declare var customElements:webcomponents.CustomElementRegistryPolyfill;

@@ -1,0 +1,2 @@
+import "./ChildComponent"
+import "./ParentComponent"

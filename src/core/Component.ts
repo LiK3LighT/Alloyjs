@@ -3,7 +3,7 @@ import {ComponentOptions} from "./ComponentOptions";
 import {NodeUtils} from "../utils/NodeUtils";
 import {StringUtils} from "../utils/StringUtils";
 
-export class Component {
+export class Component extends HTMLElement {
 
     private static registeredAttributes = new Map();
 
@@ -17,7 +17,9 @@ export class Component {
         this.registeredAttributes.set(StringUtils.toDashed(attribute.name), attribute);
     }
 
-    constructor(private rootElement:Element, options:ComponentOptions) {
+    constructor(options:ComponentOptions) {
+        super();
+
         new Promise((resolve, reject) => {
             if(options.template !== undefined) {
                 resolve(options.template);
@@ -41,15 +43,15 @@ export class Component {
         }).then((template) => {
             if(template !== undefined) {
                 let transcludedChildrenHolder = document.createElement("div");
-                while (this.rootElement.firstChild) {
-                    transcludedChildrenHolder.appendChild(this.rootElement.firstChild);
+                while (this.firstChild) {
+                    transcludedChildrenHolder.appendChild(this.firstChild);
                 }
                 this.transcludedChildren = new NodeArray(transcludedChildrenHolder.childNodes);
-                this.rootElement.innerHTML += template;
+                this.innerHTML += template;
             }
 
-            this.updateBindings(this.rootElement);
-            this.attached();
+            this.updateBindings(this);
+            this.created();
         }).catch((error) => {
             if(error instanceof TypeError) {
                 //noinspection TypeScriptUnresolvedVariable
@@ -59,21 +61,12 @@ export class Component {
         });
     }
 
-    protected attached():void {
+    protected created():void {
 
     }
+
     protected update(variableName:string):void {
 
-    }
-    protected attributeChanged(name:string, oldValue:string, newValue:string):void {
-
-    }
-    protected destructor():void {
-
-    }
-
-    public getAttribute(name:string):string {
-        return this.rootElement.getAttribute(name);
     }
 
     public getTranscludedChildren():NodeArray {
@@ -103,7 +96,7 @@ export class Component {
 
         if(this.bindMapIndex.has(startElement)) { // if node was already evaluated
 
-            if(!NodeUtils.isNodeChildOf(this.rootElement, startElement)) { // If not a child of the component anymore, remove from bindMap
+            if(!NodeUtils.isNodeChildOf(this, startElement)) { // If not a child of the component anymore, remove from bindMap
                 let bindMapKeys = this.bindMapIndex.get(startElement);
                 for(let bindMapKey of bindMapKeys) {
                     let bindMap = this.bindMap.get(bindMapKey);
@@ -115,7 +108,7 @@ export class Component {
                 }
                 this.bindMapIndex.delete(startElement);
             }
-        } else if(NodeUtils.isNodeChildOf(this.rootElement, startElement)) { // If this node is not already bound
+        } else if(NodeUtils.isNodeChildOf(this, startElement)) { // If this node is not already bound
             NodeUtils.recurseTextNodes(startElement, (node, text) => {
                 this.setupBindMapForNode(node, text);
             });
@@ -127,8 +120,7 @@ export class Component {
         }
     }
 
-
-    private cloneNode(component:Function):Node {
+    /*public cloneNode(component:Function):Node {
         let rootElement = document.createElement("div");
         let transcludedChildren = this.getTranscludedChildren();
         for(let child of transcludedChildren) {
@@ -139,7 +131,9 @@ export class Component {
         holderNode.innerHTML = "<"+component.name+">" + rootElement.innerHTML + "</"+component.name+">";
 
         return holderNode.childNodes[0];
-    }
+    }*/
+
+
 
     private evaluateAttributeHandlers(startElement:Element):void { // Creates instances of specific attribute classes into the attribute node itself.
         if(startElement.attributes !== undefined) {
