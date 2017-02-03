@@ -1,5 +1,6 @@
 import * as Alloy from "../../src/Alloy"
 
+@Alloy.component()
 export class ParentComponent extends Alloy.Component {
 
     private children1:Alloy.NodeArray;
@@ -12,9 +13,8 @@ export class ParentComponent extends Alloy.Component {
     }
 
     created() {
-        this.children1 = this.getTranscludedChildren();
-        this.children2 = this.getTranscludedChildren().clone();
+        this.children1 = this.getSlotChildren();
+        this.children2 = this.getSlotChildren().clone();
     }
 
 }
-Alloy.register(ParentComponent);

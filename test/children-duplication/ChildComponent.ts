@@ -1,5 +1,6 @@
 import * as Alloy from "../../src/Alloy"
 
+@Alloy.component()
 export class ChildComponent extends Alloy.Component {
 
     private text:string;
@@ -15,4 +16,3 @@ export class ChildComponent extends Alloy.Component {
     }
 
 }
-Alloy.register(ChildComponent);

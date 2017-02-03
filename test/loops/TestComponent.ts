@@ -1,5 +1,6 @@
 import * as Alloy from "../../src/Alloy"
 
+@Alloy.component()
 export class TestComponent extends Alloy.Component {
 
     private entries:string[];
@@ -15,4 +16,3 @@ export class TestComponent extends Alloy.Component {
     }
 
 }
-Alloy.register(TestComponent);

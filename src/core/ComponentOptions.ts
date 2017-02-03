@@ -1,4 +1,5 @@
 export interface ComponentOptions {
     template?:string,
-    templateUrl?:string
+    templateUrl?:string,
+    shadowContent?:boolean
 }

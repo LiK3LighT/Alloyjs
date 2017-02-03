@@ -7,14 +7,17 @@ export class Component extends HTMLElement {
 
     private static registeredAttributes = new Map();
 
-    private transcludedChildren:NodeArray;
+    private slotChildren:NodeArray;
 
     private variableUpdateCallbacks = new Map();
     private bindMapIndex = new Map();
     private bindMap = new Map();
 
-    public static registerAttribute(attribute:Function) {
-        this.registeredAttributes.set(StringUtils.toDashed(attribute.name), attribute);
+    public static registerAttribute(attribute:Function, name?: string) {
+        if(!name) {
+            name = StringUtils.toDashed(attribute.name);
+        }
+        this.registeredAttributes.set(name, attribute);
     }
 
     constructor(options:ComponentOptions) {
@@ -42,11 +45,14 @@ export class Component extends HTMLElement {
             }
         }).then((template) => {
             if(template !== undefined) {
-                let transcludedChildrenHolder = document.createElement("div");
+                let slotChildrenHolder = document.createElement("div");
                 while (this.firstChild) {
-                    transcludedChildrenHolder.appendChild(this.firstChild);
+                    slotChildrenHolder.appendChild(this.firstChild);
                 }
-                this.transcludedChildren = new NodeArray(transcludedChildrenHolder.childNodes);
+                this.slotChildren = new NodeArray(slotChildrenHolder.childNodes);
+                if(options.shadowContent === true) {
+                    this.attachShadow({"mode": "open"});
+                }
                 this.innerHTML += template;
             }
 
@@ -61,16 +67,18 @@ export class Component extends HTMLElement {
         });
     }
 
+    /* Can be overwritten, is called by constructor */
     protected created():void {
 
     }
 
+    /* Can be overwritten, is called by triggerUpdateCallbacks */
     protected update(variableName:string):void {
 
     }
 
-    public getTranscludedChildren():NodeArray {
-        return this.transcludedChildren;
+    public getSlotChildren():NodeArray {
+        return this.slotChildren;
     }
 
     public addUpdateCallback(variableName:string, callback:(variableName:string) => void):Component {
@@ -119,19 +127,6 @@ export class Component extends HTMLElement {
             this.updateBindings(node);
         }
     }
-
-    /*public cloneNode(component:Function):Node {
-        let rootElement = document.createElement("div");
-        let transcludedChildren = this.getTranscludedChildren();
-        for(let child of transcludedChildren) {
-            rootElement.appendChild(child.cloneNode(true));
-        }
-
-        let holderNode = document.createElement("div");
-        holderNode.innerHTML = "<"+component.name+">" + rootElement.innerHTML + "</"+component.name+">";
-
-        return holderNode.childNodes[0];
-    }*/
 
 
 
@@ -234,7 +229,7 @@ export class Component extends HTMLElement {
         if(!this.bindMap.has(variableName)) return;
 
         for(let value of this.bindMap.get(variableName)) { // Loop through all nodes in which the variable that triggered the update is used in
-            let nodeToUpdate = value[0]; // The node in which the variable that triggered the update is in, the text can already be overritten by the evaluation of evalText
+            let nodeToUpdate = value[0]; // The node in which the variable that triggered the update is in, the text can already be overwritten by the evaluation of evalText
             let evalText = value[1]; // Could contain multiple variables, but always the variable that triggered the update which is variableName
 
             // Convert the nodeToUpdate to a non TextNode Node

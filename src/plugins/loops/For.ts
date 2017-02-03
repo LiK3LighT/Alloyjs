@@ -5,6 +5,7 @@ const FOR_TYPES = {
     IN: "in"
 };
 
+//@Alloy.attribute()
 export class For extends Alloy.Attribute {
 
     private multipliedElement:Element;
@@ -73,4 +74,4 @@ export class For extends Alloy.Attribute {
     }
 
 }
-Alloy.register(For);
+Alloy.Component.registerAttribute(For);

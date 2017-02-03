@@ -1,5 +1,6 @@
 import * as Alloy from "../../src/Alloy"
 
+@Alloy.component()
 export class LoopedComponent extends Alloy.Component {
 
     private content:Alloy.NodeArray;
@@ -11,8 +12,7 @@ export class LoopedComponent extends Alloy.Component {
     }
 
     created() {
-        this.content = this.getTranscludedChildren();
+        this.content = this.getSlotChildren();
     }
 
 }
-Alloy.register(LoopedComponent);
