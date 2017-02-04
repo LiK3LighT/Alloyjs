@@ -24,39 +24,67 @@ export class Component extends HTMLElement {
         super();
 
         new Promise((resolve, reject) => {
+            let templatePromise:Promise<string|void>;
+            let stylesheetPromise:Promise<string|void>;
             if(options.template !== undefined) {
-                resolve(options.template);
+                templatePromise = Promise.resolve(options.template);
             } else if (options.templateUrl !== undefined) {
-
-                fetch(options.templateUrl)
+                templatePromise = fetch(options.templateUrl)
                     .then(response => {
                         if(response.ok) {
                             return response.text();
                         } else {
                             reject(new TypeError(response.status + " " + response.statusText));
                         }
-                    }).then(templateText => {
-                        resolve(templateText);
-                    }).catch(error => {
-                        reject(error);
                     });
             } else {
-                resolve();
-            }
-        }).then((template) => {
-            if(template !== undefined) {
-                let slotChildrenHolder = document.createElement("div");
-                while (this.firstChild) {
-                    slotChildrenHolder.appendChild(this.firstChild);
-                }
-                this.slotChildren = new NodeArray(slotChildrenHolder.childNodes);
-                if(options.shadowContent === true) {
-                    this.attachShadow({"mode": "open"});
-                }
-                this.innerHTML += template;
+                templatePromise = Promise.resolve();
             }
 
-            this.updateBindings(this);
+            if(options.style !== undefined) {
+                stylesheetPromise = Promise.resolve(options.style);
+            } else if (options.styleUrl !== undefined) {
+                stylesheetPromise = fetch(options.styleUrl)
+                    .then(response => {
+                        if(response.ok) {
+                            return response.text();
+                        } else {
+                            reject(new TypeError(response.status + " " + response.statusText));
+                        }
+                    });
+            } else {
+                stylesheetPromise = Promise.resolve();
+            }
+
+            Promise.all([templatePromise, stylesheetPromise])
+                .then((values:(string|void)[]) => {
+                    resolve(values);
+                }).catch(error => {
+                    reject(error);
+                });
+        }).then((values) => {
+            if(values[0] !== undefined) {
+                if(options.shadowContent === true) {
+                    let shadowRoot = this.attachShadow({"mode": "open"});
+                    if(values[1] !== undefined) {
+                        shadowRoot.innerHTML += `<style>${values[1]}</style>`;
+                    }
+                    shadowRoot.innerHTML += values[0];
+                    this.updateBindings(shadowRoot);
+                } else {
+                    let slotChildrenHolder = document.createElement("div");
+                    while (this.firstChild) {
+                        slotChildrenHolder.appendChild(this.firstChild);
+                    }
+                    this.slotChildren = new NodeArray(slotChildrenHolder.childNodes);
+                    if(values[1] !== undefined) {
+                        this.innerHTML += `<style scoped>${values[1]}</style>`;
+                    }
+                    this.innerHTML += `${values[0]}`;
+                    this.updateBindings(this);
+                }
+            }
+
             this.created();
         }).catch((error) => {
             if(error instanceof TypeError) {
@@ -99,7 +127,7 @@ export class Component extends HTMLElement {
         return this;
     }
 
-    public updateBindings(startElement:Element):void {
+    public updateBindings(startElement:Element|ShadowRoot):void {
         this.evaluateAttributeHandlers(startElement);
 
         if(this.bindMapIndex.has(startElement)) { // if node was already evaluated
@@ -130,7 +158,7 @@ export class Component extends HTMLElement {
 
 
 
-    private evaluateAttributeHandlers(startElement:Element):void { // Creates instances of specific attribute classes into the attribute node itself.
+    private evaluateAttributeHandlers(startElement:Element|ShadowRoot):void { // Creates instances of specific attribute classes into the attribute node itself.
         if(startElement.attributes !== undefined) {
             for (let j = 0, attributeNode; attributeNode = startElement.attributes[j]; j++) {
                 if(Component.registeredAttributes.has(attributeNode.name) && attributeNode._alloyAttribute === undefined) {
@@ -266,9 +294,9 @@ export class Component extends HTMLElement {
                     let variableDeclarationString = "";
                     for(let declaredVariableName in htmlNodeToUpdate._variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
                         //noinspection JSUnfilteredForInLoop
-                        variableDeclarationString += "let " + declaredVariableName + "=" + JSON.stringify(htmlNodeToUpdate._variables[declaredVariableName])+";";
+                        variableDeclarationString += `let ${declaredVariableName} = ${JSON.stringify(htmlNodeToUpdate._variables[declaredVariableName])};`;
                     }
-                    evaluated = eval(variableDeclarationString + "`" + evalText + "`");
+                    evaluated = eval(`${variableDeclarationString} \`${evalText}\``);
                 } catch(error) {
                     console.error(error, evalText, "on node", nodeToUpdate);
                 }

@@ -15,14 +15,12 @@ export class GenericEvent extends Alloy.Attribute { // TODO make this really gen
             variableNames[variableNames.length] = declaredVariableName;
         }
 
-        variableNames[variableNames.length] = "(" + originalFunction + ").call(this, event);"; // Add the actual function body to the function apply list
-
-        let newFunction = Function.apply(null, variableNames);
+        let newFunction;
+        eval(`newFunction = function(${variableNames.join(",")}) {(${originalFunction}).call(this,event);}`); // This is faster than Function.apply(null,[])
 
         attributeNode.ownerElement.onclick = function(event) {
             let variableValues = [event];
             for (let declaredVariableName in variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
-                //noinspection JSUnfilteredForInLoop
                 variableValues[variableValues.length] = variables[declaredVariableName];
             }
 

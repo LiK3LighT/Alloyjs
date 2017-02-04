@@ -7,12 +7,12 @@ export class FancyButton extends Alloy.Component {
 
     constructor() {
         super({
-            template: "blabla"
+            template: "test"
         });
     }
 
     created() {
-
+        console.log(this);
     }
 
 }
