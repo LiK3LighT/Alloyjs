@@ -1,2 +1,1 @@
-import "./TestComponent"
-import "./LoopedComponent"
+import "../ForInContent"

@@ -1,1 +1,1 @@
-import "./TestComponent"
+import "../OnclickFunction"

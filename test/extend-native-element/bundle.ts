@@ -1,1 +1,1 @@
-import "./FancyButton";
+import "../ExtendNativeButton";

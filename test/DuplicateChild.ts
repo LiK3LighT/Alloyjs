@@ -1,7 +1,7 @@
-import * as Alloy from "../../src/Alloy"
+import * as Alloy from "../src/Alloy"
 
 @Alloy.component()
-export class ParentComponent extends Alloy.Component {
+export class DuplicateChild extends Alloy.Component {
 
     private children1:Alloy.NodeArray;
     private children2:Alloy.NodeArray;

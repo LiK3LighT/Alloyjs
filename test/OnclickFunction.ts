@@ -1,7 +1,7 @@
-import * as Alloy from "../../src/Alloy"
+import * as Alloy from "../src/Alloy"
 
 @Alloy.component()
-export class TestComponent extends Alloy.Component {
+export class OnclickFunction extends Alloy.Component {
 
     private entries:string[];
 

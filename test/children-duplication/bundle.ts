@@ -1,2 +1,1 @@
-import "./ChildComponent"
-import "./ParentComponent"
+import "../DuplicateChild"

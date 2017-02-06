@@ -1,9 +1,9 @@
-import * as Alloy from "../../src/Alloy"
+import * as Alloy from "../src/Alloy"
 
 @Alloy.component({
     extend: "button"
 })
-export class FancyButton extends Alloy.Component {
+export class ExtendNativeButton extends Alloy.Component {
 
     constructor() {
         super({

@@ -1,7 +1,7 @@
-import * as Alloy from "../../src/Alloy"
+import * as Alloy from "../src/Alloy"
 
 @Alloy.component()
-export class ChildComponent extends Alloy.Component {
+export class AttributeText extends Alloy.Component {
 
     private text:string;
 
