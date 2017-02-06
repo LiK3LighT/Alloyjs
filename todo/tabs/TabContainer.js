@@ -9,7 +9,7 @@ class TabContainer extends Alloy.Component {
 
     attached() {
         this.titles = [];
-        this.panes = this.getSlotChildren().filter((node) => {
+        this.panes = this.getAssignedSlotNodes().filter((node) => {
             if(node._component instanceof TabPane) {
                 return true;
             }

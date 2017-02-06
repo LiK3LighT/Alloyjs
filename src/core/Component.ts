@@ -3,11 +3,13 @@ import {ComponentOptions} from "./ComponentOptions";
 import {NodeUtils} from "../utils/NodeUtils";
 import {StringUtils} from "../utils/StringUtils";
 
+const DEFAULT_SLOT_KEY = "";
+
 export class Component extends HTMLElement {
 
     private static registeredAttributes = new Map();
 
-    private slotChildren:NodeArray;
+    private assignedSlotNodes:Map<string, NodeArray> = new Map();
 
     private variableUpdateCallbacks = new Map();
     private bindMapIndex = new Map();
@@ -70,13 +72,14 @@ export class Component extends HTMLElement {
                         shadowRoot.innerHTML += `<style>${values[1]}</style>`;
                     }
                     shadowRoot.innerHTML += values[0];
+
                     this.updateBindings(shadowRoot);
                 } else {
                     let slotChildrenHolder = document.createElement("div");
                     while (this.firstChild) {
                         slotChildrenHolder.appendChild(this.firstChild);
                     }
-                    this.slotChildren = new NodeArray(slotChildrenHolder.childNodes);
+                    this.assignedSlotNodes.set(DEFAULT_SLOT_KEY, new NodeArray(slotChildrenHolder.childNodes));
                     if(values[1] !== undefined) {
                         this.innerHTML += `<style scoped>${values[1]}</style>`;
                     }
@@ -105,8 +108,16 @@ export class Component extends HTMLElement {
 
     }
 
-    public getSlotChildren():NodeArray {
-        return this.slotChildren;
+    public getAssignedSlotNodes(slotName:string = DEFAULT_SLOT_KEY):NodeArray {
+        if(this.shadowRoot !== null && !this.assignedSlotNodes.has(slotName)) {
+            this.assignedSlotNodes.set(
+                slotName,
+                new NodeArray(
+                    (this.shadowRoot.querySelector(slotName === DEFAULT_SLOT_KEY ? "slot" : `slot[name=${slotName}]`)as HTMLSlotElement).assignedNodes()
+                )
+            );
+        }
+        return this.assignedSlotNodes.get(slotName);
     }
 
     public addUpdateCallback(variableName:string, callback:(variableName:string) => void):Component {

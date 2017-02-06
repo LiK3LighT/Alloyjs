@@ -9,7 +9,7 @@ class TabPane extends Alloy.Component {
     }
 
     attached() {
-        this.content = this.getSlotChildren();
+        this.content = this.getAssignedSlotNodes();
     }
 
 }
