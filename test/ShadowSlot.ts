@@ -16,7 +16,6 @@ export class ShadowSlot extends Alloy.Component {
 
     created() {
         this.slotCopy = this.getAssignedSlotNodes().clone();
-        // TODO: This works, but the dom doesn't update?
     }
 
 }

@@ -1,13 +1,21 @@
 export class NodeUtils {
 
-    static isNodeChildOf(parent:Node, child:Node) {
-        if(child.parentElement === parent) {
-            return true;
+    static isNodeChildOfComponent(parent:Node, child:Node) {
+        let root = child.getRootNode();
+        if(root instanceof ShadowRoot) {
+            if((root as ShadowRoot).host === parent) {
+                return true;
+            }
+        } else {
+            if(child.parentElement === parent) {
+                return true;
+            }
+            if(child.parentElement === null || child.parentElement === document.body) {
+                return false;
+            }
+            return this.isNodeChildOfComponent(parent, child.parentElement);
         }
-        if(child.parentElement === null || child.parentElement === document.body) {
-            return false;
-        }
-        return this.isNodeChildOf(parent, child.parentElement);
+        return false;
     }
 
     static recurseTextNodes(startNode:Node, callback:(attributeNode:Node, text:string) => any) {

@@ -3,7 +3,7 @@ import * as Alloy from "../src/Alloy"
 @Alloy.component()
 export class ForInContent extends Alloy.Component {
 
-    private entries:string[];
+    private entries:Number[] = [];
 
     constructor() {
         super({
@@ -12,7 +12,9 @@ export class ForInContent extends Alloy.Component {
     }
 
     created() {
-        this.entries = ["a", "b", "c"];
+        setInterval(() => {
+            this.entries.push(this.entries.length);
+        }, 2000)
     }
 
 }

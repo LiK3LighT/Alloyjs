@@ -79,11 +79,20 @@ export class Component extends HTMLElement {
                     while (this.firstChild) {
                         slotChildrenHolder.appendChild(this.firstChild);
                     }
-                    this.assignedSlotNodes.set(DEFAULT_SLOT_KEY, new NodeArray(slotChildrenHolder.childNodes));
+
+                    let defaultAssignedSlotNodes = new NodeArray(slotChildrenHolder.childNodes);
+                    this.assignedSlotNodes.set(DEFAULT_SLOT_KEY, defaultAssignedSlotNodes);
                     if(values[1] !== undefined) {
                         this.innerHTML += `<style scoped>${values[1]}</style>`;
                     }
-                    this.innerHTML += `${values[0]}`;
+                    this.innerHTML += values[0];
+
+                    let slot = this.querySelector("slot");
+                    for(let i = 0, length = defaultAssignedSlotNodes.length; i < length; i++) {
+                        let node = defaultAssignedSlotNodes[i];
+                        slot.appendChild(node);
+                    }
+
                     this.updateBindings(this);
                 }
             }
@@ -104,6 +113,7 @@ export class Component extends HTMLElement {
     }
 
     /* Can be overwritten, is called by triggerUpdateCallbacks */
+    //noinspection JSUnusedLocalSymbols
     protected update(variableName:string):void {
 
     }
@@ -132,6 +142,7 @@ export class Component extends HTMLElement {
         return this;
     }
 
+    //noinspection JSUnusedGlobalSymbols
     public removeUpdateCallback(variableName:string, callback:(variableName:string) => void):Component {
         let updateCallbacks = this.variableUpdateCallbacks.get(variableName);
         updateCallbacks.splice(updateCallbacks.indexOf(callback), 1);
@@ -143,7 +154,7 @@ export class Component extends HTMLElement {
 
         if(this.bindMapIndex.has(startElement)) { // if node was already evaluated
 
-            if(!NodeUtils.isNodeChildOf(this, startElement)) { // If not a child of the component anymore, remove from bindMap
+            if(!NodeUtils.isNodeChildOfComponent(this, startElement)) { // If not a child of the component anymore, remove from bindMap
                 let bindMapKeys = this.bindMapIndex.get(startElement);
                 for(let bindMapKey of bindMapKeys) {
                     let bindMap = this.bindMap.get(bindMapKey);
@@ -155,7 +166,7 @@ export class Component extends HTMLElement {
                 }
                 this.bindMapIndex.delete(startElement);
             }
-        } else if(NodeUtils.isNodeChildOf(this, startElement)) { // If this node is not already bound
+        } else if(NodeUtils.isNodeChildOfComponent(this, startElement)) { // If this node is not already bound
             NodeUtils.recurseTextNodes(startElement, (node, text) => {
                 this.setupBindMapForNode(node, text);
             });
@@ -281,7 +292,7 @@ export class Component extends HTMLElement {
                 htmlNodeToUpdate = nodeToUpdate;
             }
 
-            if(htmlNodeToUpdate.parentElement === null) continue; // Skip nodes that are not added to the visible dom
+            if(htmlNodeToUpdate.parentNode === null) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot
 
             for(let variablesVariableName of value[2]) {
                 if(this[variablesVariableName] instanceof NodeArray || this[variablesVariableName] instanceof HTMLElement) {
