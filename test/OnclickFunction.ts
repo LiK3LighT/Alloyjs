@@ -7,7 +7,7 @@ export class OnclickFunction extends Alloy.Component {
 
     constructor() {
         super({
-            template: "<button onclick='this.test()'>click me!</button>"
+            template: "<button onclick='this.test(event)'>click me!</button>"
         });
     }
 
@@ -15,7 +15,7 @@ export class OnclickFunction extends Alloy.Component {
         this.entries = ["a", "b", "c"];
     }
 
-    test() {
+    test(event) {
         console.log(this.entries);
     }
 

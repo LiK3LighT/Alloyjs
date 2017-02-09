@@ -4,7 +4,7 @@ import {GenericEvent} from "./GenericEvent";
 export class OnClick extends GenericEvent {
 
     constructor(attributeNode) {
-        super(attributeNode);
+        super(attributeNode, "onclick");
     }
 
 }

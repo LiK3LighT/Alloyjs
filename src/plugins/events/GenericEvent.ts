@@ -1,14 +1,14 @@
 import * as Alloy from "../../Alloy"
 import {For} from "../loops/For"
 
-export class GenericEvent extends Alloy.Attribute { // TODO make this really generic... no .onclick stuff etc.
+export class GenericEvent extends Alloy.Attribute {
 
-    constructor(attributeNode) {
+    constructor(attributeNode:Attr, eventName:string) {
         super(attributeNode);
 
         let component = this.getComponent();
         let variables = For.getScopeVariables(attributeNode.ownerElement);
-        let originalFunction = attributeNode.ownerElement.onclick;
+        let originalFunction = attributeNode.ownerElement[eventName];
 
         let variableNames = ["event"];
         for(let declaredVariableName in variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
@@ -16,9 +16,9 @@ export class GenericEvent extends Alloy.Attribute { // TODO make this really gen
         }
 
         let newFunction;
-        eval(`newFunction = function(${variableNames.join(",")}) {(${originalFunction}).call(this,event);}`); // This is faster than Function.apply(null,[])
+        eval(`newFunction = function(${variableNames.join(",")}) {(${originalFunction}).call(this,event);}`); // This is 50% faster than Function.apply(null,[])
 
-        attributeNode.ownerElement.onclick = function(event) {
+        attributeNode.ownerElement[eventName] = function(event) {
             let variableValues = [event];
             for (let declaredVariableName in variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
                 variableValues[variableValues.length] = variables[declaredVariableName];
