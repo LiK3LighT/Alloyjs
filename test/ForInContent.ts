@@ -12,9 +12,11 @@ export class ForInContent extends Alloy.Component {
     }
 
     created() {
+        let self = this;
         setInterval(() => {
-            this.entries.push(this.entries.length);
-        }, 2000)
+            self.entries.push(self.entries.length);
+        }, 2000);
+        self.entries = [1, 2, 3];
     }
 
 }

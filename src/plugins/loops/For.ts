@@ -28,19 +28,19 @@ export class For extends Alloy.Attribute {
         return null;
     }
 
-    constructor(attributeAttr:Attr) {
-        super(attributeAttr);
+    constructor(attributeNode:Attr) {
+        super(attributeNode);
 
-        this.multipliedElement = attributeAttr.ownerElement;
+        this.multipliedElement = attributeNode.ownerElement;
         this.multipliedElement.removeAttribute("for");
         this.parentNode = this.multipliedElement.parentNode;
         this.parentNode.removeChild(this.multipliedElement);
 
         this.component.updateBindings(this.multipliedElement);
 
-        this.forType = attributeAttr.value.indexOf(" in ") !== -1 ? FOR_TYPES.IN : FOR_TYPES.OF;
+        this.forType = attributeNode.value.indexOf(" in ") !== -1 ? FOR_TYPES.IN : FOR_TYPES.OF;
 
-        let parts = attributeAttr.value.split(" " + this.forType + " ");
+        let parts = attributeNode.value.split(" " + this.forType + " ");
         this.toVariable = parts[0].substring(parts[0].indexOf(" ") + 1).trim();
         this.fromVariable = parts[1].substring(parts[1].indexOf(".") + 1).trim();
     }

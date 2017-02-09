@@ -241,7 +241,7 @@ export class Component extends HTMLElement {
     }
 
     private buildSetterVariable(variableName:string):void {
-        if(this.hasOwnProperty(variableName)) return;
+        if(this.hasOwnProperty(variableName) && Object.getOwnPropertyDescriptor(this, variableName).get !== undefined) return; // If the variable already has a callback skip it
 
         this["__" + variableName] = this[variableName];
         Object.defineProperty(this, variableName, {
