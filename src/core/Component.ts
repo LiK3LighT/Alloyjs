@@ -137,7 +137,7 @@ export class Component extends HTMLElement {
         let updateCallbacks = this.variableUpdateCallbacks.get(variableName);
         updateCallbacks[updateCallbacks.length] = callback;
 
-        this.buildSetterVariable(variableName);
+        this.trackVariableUpdates(variableName);
 
         return this;
     }
@@ -178,8 +178,6 @@ export class Component extends HTMLElement {
         }
     }
 
-
-
     private evaluateAttributeHandlers(startElement:Element|ShadowRoot):void { // Creates instances of specific attribute classes into the attribute node itself.
         if(startElement.attributes !== undefined) {
             for (let j = 0, attributeNode; attributeNode = startElement.attributes[j]; j++) {
@@ -195,18 +193,27 @@ export class Component extends HTMLElement {
         }
     }
 
-    // TODO: Performance save evaluated function objects in the bind mapping and just call these instead of evaluating the functions with every update
+    // TODO: Performance save evaluated function objects in the bind mapping and just call these instead of evaluating the functions with every update (Probably not possible because of variables in ._variables that are dynamic)
     private setupBindMapForNode(node:Node, text:string):void {
         let alreadyBoundForNode = new Set();
-        this.callForVariablesInText(text, (variables) => {
-            for(let variableName of variables) {
+        this.callForVariablesInText(text, (variableNames) => {
+            let thisLessVariableNames = new Set();
+            for(let variableName of variableNames) {
+                if(variableName.indexOf("this.") === 0) {
+                    thisLessVariableNames.add(variableName.substring(5));
+                } else {
+                    thisLessVariableNames.add(variableName);
+                }
+            }
+
+            for(let variableName of variableNames) {
                 if(!alreadyBoundForNode.has(variableName)) {
                     alreadyBoundForNode.add(variableName);
                     if (!this.bindMap.has(variableName)) {
                         this.bindMap.set(variableName, []);
                     }
                     let bindAttributes = this.bindMap.get(variableName);
-                    bindAttributes.push([node, text, variables]);
+                    bindAttributes.push([node, text, thisLessVariableNames]);
 
                     if(!this.bindMapIndex.has(node)) {
                         this.bindMapIndex.set(node, new Set());
@@ -215,7 +222,7 @@ export class Component extends HTMLElement {
                     bindMapIndexEntries.add(variableName);
 
                     if (Object.getOwnPropertyDescriptor(this, variableName) === undefined || Object.getOwnPropertyDescriptor(this, variableName).set === undefined) {
-                        this.buildSetterVariable(variableName);
+                        this.trackVariableUpdates(variableName);
                     }
                 }
             }
@@ -223,7 +230,7 @@ export class Component extends HTMLElement {
     }
 
     private evalMatchRegExp = /\${([^}]*)}/g;
-    private variablesRegExp = /\s*this\.([a-zA-Z0-9_$]+)\s*/g;
+    private variablesRegExp = /\s*(this\.[a-zA-Z0-9_$]+)\s*/g;
     private callForVariablesInText(text:string, callback:(variables:Set<string>) => void):void {
         let evalMatch;
         this.evalMatchRegExp.lastIndex = 0; // Reset the RegExp, better performance than recreating it every time
@@ -240,13 +247,14 @@ export class Component extends HTMLElement {
         }
     }
 
-    private buildSetterVariable(variableName:string):void {
-        if(this.hasOwnProperty(variableName) && Object.getOwnPropertyDescriptor(this, variableName).get !== undefined) return; // If the variable already has a callback skip it
+    private trackVariableUpdates(variableName:string):void {
+        let thisLessVariableName = variableName.substring(5);
+        if(this.hasOwnProperty(thisLessVariableName) && Object.getOwnPropertyDescriptor(this, thisLessVariableName).get !== undefined) return; // If the variable already has a callback skip it
 
-        this["__" + variableName] = this[variableName];
-        Object.defineProperty(this, variableName, {
+        this["__" + thisLessVariableName] = this[thisLessVariableName];
+        Object.defineProperty(this, thisLessVariableName, {
             get: () => {
-                return this["__" + variableName];
+                return this["__" + thisLessVariableName];
             },
             set: (newValue:any) => {
                 if(newValue !== undefined && newValue !== null && newValue.constructor === Object || newValue instanceof Array) {
@@ -267,8 +275,8 @@ export class Component extends HTMLElement {
                     };
                     newValue = new Proxy(newValue, proxyTemplate);
                 }
-                if(this["__" + variableName] !== newValue) {
-                    this["__" + variableName] = newValue;
+                if(this["__" + thisLessVariableName] !== newValue) {
+                    this["__" + thisLessVariableName] = newValue;
                     this.triggerUpdateCallbacks(variableName);
                 }
             }
@@ -294,10 +302,12 @@ export class Component extends HTMLElement {
 
             if(htmlNodeToUpdate.parentNode === null) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot
 
+            //TODO: this doesn't work with variables that are in the ._variables field, but only with those in the component itself
+            // Loop through variables, check if of type node and evaluate them seperately (These variables get removed from the evalText)
             for(let variablesVariableName of value[2]) {
                 if(this[variablesVariableName] instanceof NodeArray || this[variablesVariableName] instanceof HTMLElement) {
-                    evalText = evalText.replace(new RegExp("\\${\\s*this\\." + variablesVariableName + "\\s*}", "g"), ""); // Remove already as node identified and evaluated variables from evalText
-                    if(variableName === variablesVariableName) {
+                    evalText = evalText.replace(new RegExp("\\${\\s*this." + variablesVariableName + "\\s*}", "g"), ""); // Remove already as node identified and evaluated variables from evalText
+                    if(variableName === "this."+variablesVariableName) {
                         if(this[variablesVariableName] instanceof NodeArray) {
                             for(let i = 0, length = this[variablesVariableName].length; i < length; i++) {
                                 let node = this[variablesVariableName][i];
@@ -314,10 +324,12 @@ export class Component extends HTMLElement {
                 let evaluated;
                 try {
                     let variableDeclarationString = "";
+                    // Dynamically add variables that got added to the scope
                     for(let declaredVariableName in htmlNodeToUpdate._variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
                         //noinspection JSUnfilteredForInLoop
                         variableDeclarationString += `let ${declaredVariableName} = ${JSON.stringify(htmlNodeToUpdate._variables[declaredVariableName])};`;
                     }
+                    // All this. variables are automatically in the context here so no need to add anything for these
                     evaluated = eval(`${variableDeclarationString} \`${evalText}\``);
                 } catch(error) {
                     console.error(error, evalText, "on node", nodeToUpdate);
