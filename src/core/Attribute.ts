@@ -4,7 +4,7 @@ export class Attribute {
 
     protected component:Component;
 
-    private variablesRegExp = /\s*(this\.[a-zA-Z0-9_$]+)\s*/g;
+    private variablesRegExp = /\s*(this\.[a-zA-Z0-9_$]+)\s*/g; // Note: for future regexes, ignore let and var variables here.
 
     constructor(attributeNode:Attr) {
         this.component = attributeNode._alloyComponent;

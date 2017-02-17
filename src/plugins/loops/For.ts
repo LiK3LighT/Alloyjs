@@ -43,6 +43,12 @@ export class For extends Alloy.Attribute {
         let parts = attributeNode.value.split(" " + this.forType + " ");
         this.toVariable = parts[0].substring(parts[0].indexOf(" ") + 1).trim();
         this.fromVariable = parts[1].substring(parts[1].indexOf(".") + 1).trim();
+
+        /*if(this.forType == FOR_TYPES.OF) {
+            this.component.addUpdateCallback(this.toVariable, (variableName) => {
+                this.update();
+            })
+        }*/
     }
 
     update() {
@@ -53,22 +59,24 @@ export class For extends Alloy.Attribute {
             if(!this.appendedChildren.has(key)) {
                 let newElement = <Element>this.multipliedElement.cloneNode(true);
                 newElement._variables = Object.create(null);
+                this.parentNode.appendChild(newElement);
                 if(this.forType == FOR_TYPES.IN) {
                     newElement._variables[this.toVariable] = key;
                 } else {
                     newElement._variables[this.toVariable] = from[key];
                 }
-                this.parentNode.appendChild(newElement);
                 this.component.updateBindings(newElement);
                 this.appendedChildren.set(key, newElement);
             }
         }
-        for(let key of this.appendedChildren.keys()) {
-            if(!from.hasOwnProperty(key)) {
-                let nodeToRemove = this.appendedChildren.get(key);
-                this.component.updateBindings(nodeToRemove);
-                nodeToRemove.remove();
-                this.appendedChildren.delete(key);
+        if(this.appendedChildren !== undefined) {
+            for (let key of this.appendedChildren.keys()) {
+                if (!from.hasOwnProperty(key)) {
+                    let nodeToRemove = this.appendedChildren.get(key);
+                    this.component.updateBindings(nodeToRemove);
+                    nodeToRemove.remove();
+                    this.appendedChildren.delete(key);
+                }
             }
         }
     }
