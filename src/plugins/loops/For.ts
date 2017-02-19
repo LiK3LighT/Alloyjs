@@ -66,9 +66,9 @@ export class For extends Alloy.Attribute {
                 } else {
                     newElement._variables[this.toVariable] = from[key];
                 }
+                this.component.updateBindings(newElement);
                 this.component.trackVariableUpdates(newElement._variables, this.toVariable);
 
-                this.component.updateBindings(newElement);
                 this.appendedChildren.set(key, newElement);
             }
         }
