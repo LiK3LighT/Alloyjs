@@ -1,4 +1,5 @@
 import * as Alloy from "../../Alloy"
+import {CommonUtils} from "../../utils/CommonUtils";
 
 const FOR_TYPES = {
     OF: "of",
@@ -65,6 +66,8 @@ export class For extends Alloy.Attribute {
                 } else {
                     newElement._variables[this.toVariable] = from[key];
                 }
+                this.component.trackVariableUpdates(newElement._variables, this.toVariable);
+
                 this.component.updateBindings(newElement);
                 this.appendedChildren.set(key, newElement);
             }

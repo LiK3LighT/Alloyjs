@@ -147,6 +147,12 @@ export class Component extends HTMLElement {
         return this;
     }
 
+    public trackVariableUpdates(parent:Object, childKey:string):void {
+        CommonUtils.addVariableUpdateCallback(parent, childKey, () => {
+            this.triggerUpdateCallbacks(childKey);
+        });
+    }
+
     //noinspection JSUnusedGlobalSymbols
     public removeUpdateCallback(variableName:string, callback:(variableName:string) => void):Component {
         let updateCallbacks = this.variableUpdateCallbacks.get(variableName);
@@ -231,7 +237,7 @@ export class Component extends HTMLElement {
                             CommonUtils.addVariableUpdateCallback(this, variableName.substring(5), () => {
                                 this.triggerUpdateCallbacks(variableName);
                             });
-                        } else {
+                        }/* else {
                             let containerNode:Element;
                             if(node instanceof CharacterData) {
                                 containerNode = node.parentElement;
@@ -242,7 +248,7 @@ export class Component extends HTMLElement {
                             CommonUtils.addVariableUpdateCallback(containerNode._variables, variableName, () => {
                                 this.triggerUpdateCallbacks(variableName);
                             });
-                        }
+                        }*/
                     }
                 }
             }

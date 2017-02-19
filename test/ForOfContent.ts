@@ -7,13 +7,13 @@ export class ForOfContent extends Alloy.Component {
 
     constructor() {
         super({
-            template: "<div for='let value of this.entries'>${value}</div>"
+            template: "<div for='let value of this.entries'><!--b>${value}</b><br-->${value}</div>"
         });
     }
 
     created() {
         let self = this;
-        self.entries = [1, 2, 3];
+        self.entries = [1, 2, 3, 4];
     }
 
 }
