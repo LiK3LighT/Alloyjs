@@ -1,13 +1,13 @@
 import * as Alloy from "../src/Alloy"
 
 @Alloy.component()
-export class NestedForOfContent extends Alloy.Component {
+export class NestedForInContent extends Alloy.Component {
 
     private entries:Number[][] = [];
 
     constructor() {
         super({
-            template:"<div for='let values of this.entries'><br><span for='let value of values'>${value}</span></div>"
+            template:"<div for='let key in this.entries'><br><span for='let key2 in this.entries[key]'>${this.entries[key][key2]}</span></div>"
         });
     }
 

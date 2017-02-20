@@ -204,6 +204,15 @@ export class Component extends HTMLElement {
         }
     }
 
+    private static getScopeVariableContainer(element:Element, variableName:string) {
+        if(element._variables && element._variables[variableName]) {
+            return element._variables;
+        } else if(element.parentElement == null) {
+            return null;
+        }
+        return this.getScopeVariableContainer(element.parentElement, variableName);
+    }
+
     // TODO: Performance: save evaluated function objects in the bind mapping and just call these instead of evaluating the functions with every update (Probably not possible because of variables in ._variables that are dynamic)
     private setupBindMapForNode(node:Node, text:string):void {
         let alreadyBoundForNode = new Set();
@@ -217,6 +226,22 @@ export class Component extends HTMLElement {
                 }
             }*/
 
+            let variableContainerObjects = new Set();
+            for(let variableName of variableNames) {
+                if(variableName.indexOf("this.") !== 0) {
+                    let containerElement:Element;
+                    if(node instanceof CharacterData) {
+                        containerElement = node.parentElement;
+                    } else {
+                        containerElement = node as Element;
+                    }
+                    let variableContainer = Component.getScopeVariableContainer(containerElement, variableName);
+                    if(variableContainer !== null) {
+                        variableContainerObjects.add(variableContainer);
+                    }
+                }
+            }
+
             for(let variableName of variableNames) {
                 if(!alreadyBoundForNode.has(variableName)) {
                     alreadyBoundForNode.add(variableName);
@@ -224,7 +249,8 @@ export class Component extends HTMLElement {
                         this.bindMap.set(variableName, []);
                     }
                     let bindAttributes = this.bindMap.get(variableName);
-                    bindAttributes.push([node, text]);//, thisLessVariableNames]);
+
+                    bindAttributes.push([node, text, variableContainerObjects]);//, thisLessVariableNames]);
 
                     if(!this.bindMapIndex.has(node)) {
                         this.bindMapIndex.set(node, new Set());
@@ -280,6 +306,7 @@ export class Component extends HTMLElement {
         for(let value of this.bindMap.get(variableName)) { // Loop through all nodes in which the variable that triggered the update is used in
             let nodeToUpdate = value[0]; // The node in which the variable that triggered the update is in, the text can already be overwritten by the evaluation of evalText
             let evalText = value[1]; // Could contain multiple variables, but always the variable that triggered the update which is variableName
+            let variableContainerObjects = value[2];
 
             // Convert the nodeToUpdate to a non TextNode Node
             let htmlNodeToUpdate;
@@ -312,12 +339,14 @@ export class Component extends HTMLElement {
             }*/
 
             if(!(nodeToUpdate instanceof HTMLElement)) {
+                let variableDeclarationString = "";
                 try {
-                    let variableDeclarationString = "";
                     // Dynamically add variables that got added to the scope
-                    for(let declaredVariableName in htmlNodeToUpdate._variables) { // no need to check for hasOwnProperty, cause of Object.create(null)
-                        //noinspection JSUnfilteredForInLoop
-                        variableDeclarationString += `let ${declaredVariableName} = ${JSON.stringify(htmlNodeToUpdate._variables[declaredVariableName])};`;
+                    for(let variableContainerObject of variableContainerObjects) {
+                        for(let declaredVariableName in variableContainerObject) { // no need to check for hasOwnProperty, cause of Object.create(null)
+                            //noinspection JSUnfilteredForInLoop
+                            variableDeclarationString += `let ${declaredVariableName} = ${JSON.stringify(variableContainerObject[declaredVariableName])};`;
+                        }
                     }
                     // All this. variables are automatically in the context here so no need to add anything for these
                     let evaluated = eval(`${variableDeclarationString} \`${evalText}\``);
@@ -328,7 +357,7 @@ export class Component extends HTMLElement {
                         nodeToUpdate.value = evaluated;
                     }
                 } catch(error) {
-                    console.error(error, evalText, "on node", nodeToUpdate);
+                    console.error(error, `${variableDeclarationString} \`${evalText}\``, "on node", nodeToUpdate, "triggered by", variableName);
                 }
             }
         }
