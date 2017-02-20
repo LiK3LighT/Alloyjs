@@ -1,5 +1,5 @@
 {
-  "name": "@alloyjs/core",
+  "name": "@alloy/core",
   "version": "0.1.0",
   "description": "HTML data binding system using web components",
   "keywords": [
