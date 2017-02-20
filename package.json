@@ -1,16 +1,19 @@
 {
   "name": "alloyjs",
   "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "description": "HTML data binding system using web components",
+  "main": "src/Alloy.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/koenig-dominik/Alloyjs.git"
+    "url": "https://github.com/koenig-dominik/Alloyjs.git#development"
   },
   "scripts": {
-    "webpack": ""
+
   },
-  "author": "https://github.com/koenig-dominik",
+  "author": { "name" : "Dominik König",
+    "email" : "koenig.domi@gmail.com",
+    "url" : "https://github.com/koenig-dominik"
+  },
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/koenig-dominik/Alloyjs/issues"
