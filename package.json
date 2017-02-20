@@ -1,8 +1,12 @@
 {
-  "name": "alloyjs",
+  "name": "@alloyjs/core",
   "version": "0.1.0",
   "description": "HTML data binding system using web components",
-  "main": "src/Alloy.js",
+  "keywords": [
+    "web-components",
+    "shadow-dom"
+  ],
+  "main": "index.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/koenig-dominik/Alloyjs.git#development"
