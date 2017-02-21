@@ -1,3 +1,6 @@
+import "typings/webcomponents"
+import "core/classExtensions"
+
 import {Component} from "./core/Component";
 import {Attribute} from "./core/Attribute";
 import {StringUtils} from "./utils/StringUtils";
