@@ -1,22 +1,23 @@
 {
-  "name": "alloyjs",
-  "version": "0.1.2",
+  "name": "@alloyjs/core",
+  "version": "0.1.4",
   "private": false,
   "description": "HTML data binding system using web components",
   "keywords": [
     "web-components",
     "shadow-dom"
   ],
-  "main": "index.ts",
+  "main": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/koenig-dominik/Alloyjs.git#development"
   },
   "scripts": {
-
+    "build": ".\\node_modules\\.bin\\tsc.cmd"
   },
   "typings": "index.d.ts",
-  "author": { "name" : "Dominik König",
+  "author": {
+    "name" : "Dominik König",
     "email" : "koenig.domi@gmail.com",
     "url" : "https://github.com/koenig-dominik"
   },

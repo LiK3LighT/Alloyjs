@@ -1,6 +1,3 @@
-import "typings/webcomponents"
-import "core/classExtensions"
-
 import {Component} from "./core/Component";
 import {Attribute} from "./core/Attribute";
 import {StringUtils} from "./utils/StringUtils";
@@ -10,7 +7,7 @@ export {Component};
 export {Attribute};
 export {NodeArray};
 
-interface ComponentDecoratorOptions {
+export interface ComponentDecoratorOptions {
     name?: string,
     extend?: string
 }
