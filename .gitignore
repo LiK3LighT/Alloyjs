@@ -5,6 +5,10 @@
 
 node_modules/
 
+publish/**
+!publish/package.json
+!publish/README.md
+
 src/**/*.js
 src/**/*.map
 
