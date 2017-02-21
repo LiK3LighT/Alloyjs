@@ -1,6 +1,7 @@
 {
-  "name": "@alloy/core",
+  "name": "@alloyjs/core",
   "version": "0.1.0",
+  "private": false,
   "description": "HTML data binding system using web components",
   "keywords": [
     "web-components",
@@ -14,6 +15,7 @@
   "scripts": {
 
   },
+  "typings": "index.d.ts",
   "author": { "name" : "Dominik König",
     "email" : "koenig.domi@gmail.com",
     "url" : "https://github.com/koenig-dominik"
