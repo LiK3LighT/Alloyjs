@@ -1,4 +1,4 @@
-import * as Alloy from "../src/Alloy"
+import * as Alloy from "../../src/Alloy"
 
 @Alloy.component()
 export class AttributeText extends Alloy.Component {

@@ -1,7 +1,7 @@
-import * as Alloy from "../src/Alloy"
+import * as Alloy from "../../src/Alloy"
 
 @Alloy.component()
-export class NestedForInContent extends Alloy.Component {
+export class NestedForInTemplate extends Alloy.Component {
 
     private entries:Number[][] = [];
 

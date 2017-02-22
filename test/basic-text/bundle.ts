@@ -1,2 +1,2 @@
-import "../NodeText"
-import "../AttributeText"
+import "./NodeText"
+import "./AttributeText"

@@ -1,1 +1,1 @@
-import "../DuplicateChild"
+import "./DuplicateChild"

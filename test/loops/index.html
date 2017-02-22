@@ -3,13 +3,27 @@
     <head>
     </head>
     <body>
-        <!--for-in-content></for-in-content>
+        For in template
+        <for-in-template></for-in-template>
         <hr>
-        <for-of-content></for-of-content>
-        <hr-->
-        <nested-for-in-content></nested-for-in-content>
+        For of template
+        <for-of-template></for-of-template>
         <hr>
-        <!--nested-for-of-content></nested-for-of-content-->
+        Nested for in template
+        <!--nested-for-in-template></nested-for-in-template-->
+        <hr>
+        Nested for of template
+        <!--nested-for-of-template></nested-for-of-template-->
+        <hr>
+        For in slot
+        <for-slot>
+            <div for="let value in this.test"><b>${this.test[value]}</b>${this.test[value]}</div>
+        </for-slot>
+        <hr>
+        For of slot
+        <for-slot>
+            <div for="let value of this.test"><b>${value}</b>${value}</div>
+        </for-slot>
         <script src="bundle.js"></script>
     </body>
 </html>

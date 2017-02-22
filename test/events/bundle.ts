@@ -1,1 +1,1 @@
-import "../OnclickFunction"
+import "./OnclickFunction"
