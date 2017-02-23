@@ -1,7 +1,7 @@
 {
   "name": "@alloyjs/core",
   "version": "0.0.0-DO-NOT-PUBLISH",
-  "private": false,
+  "private": true,
   "description": "HTML data binding system using web components",
   "keywords": [
     "web-components",
@@ -28,11 +28,10 @@
   },
   "homepage": "https://github.com/koenig-dominik/Alloyjs#readme",
   "dependencies": {
-    "@types/whatwg-fetch": "0.0.33",
-    "typescript": "^2.1.5"
+    "typescript": "^2.2.1"
   },
   "devDependencies": {
-    "ts-loader": "^2.0.0",
+    "ts-loader": "^2.0.1",
     "webpack": "^2.2.1"
   }
 }

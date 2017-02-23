@@ -8,8 +8,7 @@
     "lib": [
       "ES2015",
       "DOM"
-    ],
-    "types":["whatwg-fetch"]
+    ]
   },
   "include": [
     "./**/*.ts",
