@@ -7,13 +7,14 @@ export class NodeUtils {
                 return true;
             }
         } else {
-            if(child.parentElement === parent) {
+            let parentElement = child.parentElement;
+            if(parentElement === parent) {
                 return true;
             }
-            if(child.parentElement === null || child.parentElement === document.body) {
+            if(parentElement === null || parentElement === document.body || parentElement["isAlloyComponent"] !== undefined) {
                 return false;
             }
-            return this.isNodeChildOfComponent(parent, child.parentElement);
+            return this.isNodeChildOfComponent(parent, parentElement);
         }
         return false;
     }

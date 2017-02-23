@@ -9,6 +9,7 @@ const DEFAULT_SLOT_KEY = "";
 export class Component extends HTMLElement {
 
     private static registeredAttributes = new Map();
+    private isAlloyComponent = true;
 
     private assignedSlotNodes:Map<string, NodeArray> = new Map();
 
@@ -74,7 +75,11 @@ export class Component extends HTMLElement {
                     }
                     shadowRoot.innerHTML += values[0];
 
+                    // Need to update both the shadowRoot and the slot content
+                    console.error("#", this)
                     this.updateBindings(shadowRoot);
+                    console.error("!", this)
+                    this.updateBindings(this);
                 } else {
                     let slotChildrenHolder = document.createElement("div");
                     while (this.firstChild) {
@@ -160,48 +165,53 @@ export class Component extends HTMLElement {
         return this;
     }
 
-    public updateBindings(startElement:Element|ShadowRoot):void {
-        this.evaluateAttributeHandlers(startElement);
-
-        if(this.bindMapIndex.has(startElement)) { // if node was already evaluated
-
-            if(!NodeUtils.isNodeChildOfComponent(this, startElement)) { // If not a child of the component anymore, remove from bindMap
-                let bindMapKeys = this.bindMapIndex.get(startElement);
+    public updateBindings(element:Element|ShadowRoot):void {
+        let inBindMap = this.bindMapIndex.has(element);
+        if(!NodeUtils.isNodeChildOfComponent(this, element) && element !== this) {
+            if(inBindMap === true) {
+                let bindMapKeys = this.bindMapIndex.get(element);
                 for(let bindMapKey of bindMapKeys) {
                     let bindMap = this.bindMap.get(bindMapKey);
                     for(let i = 0, length = bindMap.length; i < length; i++) {
-                        if(bindMap[i][0] === startElement) {
+                        if(bindMap[i][0] === element) {
                             bindMap.splice(i, 1);
                         }
                     }
                 }
-                this.bindMapIndex.delete(startElement);
+                this.bindMapIndex.delete(element);
             }
-        } else if(NodeUtils.isNodeChildOfComponent(this, startElement)) { // If this node is not already bound and a child of the component
-            NodeUtils.recurseTextNodes(startElement, (node, text) => {
+            return; // Dont update bindings of elements that are not a child of this specific component
+        }
+
+        console.log(element);
+
+        this.evaluateAttributeHandlers(element);
+
+        if(inBindMap === false) { // If this node is not already bound and a child of the component
+            NodeUtils.recurseTextNodes(element, (node, text) => {
                 this.setupBindMapForNode(node, text);
             });
         }
 
-        let nodeList = startElement.childNodes;
+        let nodeList = element.childNodes;
         for (let i = 0, node; node = nodeList[i]; i++) {
             this.updateBindings(node);
         }
     }
 
-    private evaluateAttributeHandlers(startElement:Element|ShadowRoot):void { // Creates instances of specific attribute classes into the attribute node itself.
-        if(startElement.attributes !== undefined) {
-            for (let j = 0, attributeNode; attributeNode = startElement.attributes[j]; j++) {
+    private evaluateAttributeHandlers(element:Element|ShadowRoot):void { // Creates instances of specific attribute classes into the attribute node itself.
+        if(element.attributes !== undefined) {
+            for (let j = 0, attributeNode; attributeNode = element.attributes[j]; j++) {
                 if(Component.registeredAttributes.has(attributeNode.name) && attributeNode._alloyAttribute === undefined) {
                     attributeNode._alloyComponent = this;
                     attributeNode._alloyAttribute = new (Component.registeredAttributes.get(attributeNode.name))(attributeNode);
                 }
             }
         }
-        let nodeList = startElement.childNodes;
+        /*let nodeList = element.childNodes; // Probably not needded because evaluateAttributeHanders is executed for every node anyways? // Breaks nested for loops in different components
         for (let i = 0, node; node = nodeList[i]; i++) {
             this.evaluateAttributeHandlers(node);
-        }
+        }*/
     }
 
     private static getScopeVariableContainer(element:Element, variableName:string) {

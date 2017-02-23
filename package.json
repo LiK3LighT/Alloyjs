@@ -13,7 +13,8 @@
     "url": "https://github.com/koenig-dominik/Alloyjs.git#development"
   },
   "scripts": {
-    "build": ".\\node_modules\\.bin\\tsc.cmd"
+    "test": "webpack.cmd --progress --colors --watch",
+    "build": "tsc.cmd"
   },
   "typings": "index.d.ts",
   "author": {

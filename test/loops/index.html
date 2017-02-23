@@ -3,6 +3,9 @@
     <head>
     </head>
     <body>
+        <hr>
+        <b>NOT SHADOWED</b>
+        <hr>
         For in template
         <for-in-template></for-in-template>
         <hr>
@@ -24,6 +27,37 @@
         <for-slot>
             <div for="let value of this.test"><b>${value}</b>${value}</div>
         </for-slot>
+        <hr>
+        <b>SHADOWED</b>
+        <hr>
+        For in template
+        <for-in-template-shadowed></for-in-template-shadowed>
+        <hr>
+        For of template
+        <for-of-template-shadowed></for-of-template-shadowed>
+        <hr>
+        Nested for in template
+        <!--nested-for-in-template-shadowed></nested-for-in-template-shadowed-->
+        <hr>
+        Nested for of template
+        <!--nested-for-of-template-shadowed></nested-for-of-template-shadowed-->
+        <hr>
+        For in slot
+        <for-slot-shadowed>
+            <div for="let value in this.test"><b>${this.test[value]}</b>${this.test[value]}</div>
+        </for-slot-shadowed>
+        <hr>
+        For of slot
+        <for-slot-shadowed>
+            <div for="let value of this.test"><b>${value}</b>${value}</div>
+        </for-slot-shadowed>
+        <hr>
+        Nested for in slot components
+        <for-slot-shadowed>
+            <nested-for-slot-shadowed for="let value of this.test" test="${value}">
+                <div>First Level</div><div for="let value of this.test2">${value}</div><br>
+            </nested-for-slot-shadowed>
+        </for-slot-shadowed>
         <script src="bundle.js"></script>
     </body>
 </html>

@@ -1,5 +1,4 @@
 import * as Alloy from "../../Alloy"
-import {CommonUtils} from "../../utils/CommonUtils";
 
 const FOR_TYPES = {
     OF: "of",
@@ -44,12 +43,6 @@ export class For extends Alloy.Attribute {
         let parts = attributeNode.value.split(" " + this.forType + " ");
         this.toVariable = parts[0].substring(parts[0].indexOf(" ") + 1).trim();
         this.fromVariable = parts[1].substring(parts[1].indexOf(".") + 1).trim();
-
-        /*if(this.forType == FOR_TYPES.OF) {
-            this.component.addUpdateCallback(this.toVariable, (variableName) => {
-                this.update();
-            })
-        }*/
     }
 
     update() {
