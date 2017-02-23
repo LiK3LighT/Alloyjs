@@ -1,7 +1,8 @@
 export class CommonUtils {
 
     static addVariableUpdateCallback(parent:Object, childKey:string, callback:(variableName:string) => void):void {
-        if(parent[childKey] !== undefined && Object.getOwnPropertyDescriptor(parent, childKey).get !== undefined) return; // If the variable already has a callback skip it
+        // Cant check for Object.getOwnProperty() because of Object.create(null)
+        if(Object.getOwnPropertyDescriptor(parent, childKey) !== undefined && Object.getOwnPropertyDescriptor(parent, childKey).get !== undefined) return; // If the variable already has a callback skip it
 
         let underscoredKey = "__" + childKey;
         parent[underscoredKey] = parent[childKey];

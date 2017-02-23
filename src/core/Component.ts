@@ -76,9 +76,7 @@ export class Component extends HTMLElement {
                     shadowRoot.innerHTML += values[0];
 
                     // Need to update both the shadowRoot and the slot content
-                    console.error("#", this)
                     this.updateBindings(shadowRoot);
-                    console.error("!", this)
                     this.updateBindings(this);
                 } else {
                     let slotChildrenHolder = document.createElement("div");
@@ -182,8 +180,6 @@ export class Component extends HTMLElement {
             }
             return; // Dont update bindings of elements that are not a child of this specific component
         }
-
-        console.log(element);
 
         this.evaluateAttributeHandlers(element);
 
@@ -291,9 +287,9 @@ export class Component extends HTMLElement {
         });
     }
 
-    //TODO: it would probably faster to search for this with indexOf
+    //TODO: Performance: it would probably faster to search for this with indexOf
     private evalMatchRegExp = /\${([^}]*)}/g;
-    private variablesRegExp = /\s*([.a-zA-Z0-9_$]+)\s*/g; // TODO: this has definitely some bugs in it
+    private variablesRegExp = /\s*((?:this.)?[a-zA-Z0-9_$]+)\.*\s*/g; // TODO: could have some bugs in it
     private callForVariablesInText(text:string, callback:(variables:Set<string>) => void):void {
         let evalMatch;
         this.evalMatchRegExp.lastIndex = 0; // Reset the RegExp, better performance than recreating it every time
