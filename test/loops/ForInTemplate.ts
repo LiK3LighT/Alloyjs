@@ -7,7 +7,7 @@ export class ForInTemplate extends Alloy.Component {
 
     constructor() {
         super({
-            template: "<div for='let key in this.entries'><b>${this.entries[key]}</b>${this.entries[key]}</div>"
+            template: "<div loop-for='let key in this.entries'><b>${this.entries[key]}</b>${this.entries[key]}</div>"
         });
     }
 

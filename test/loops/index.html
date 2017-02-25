@@ -20,12 +20,12 @@
         <hr>
         For in slot
         <for-slot>
-            <div for="let value in this.test"><b>${this.test[value].a}</b>${this.test[value].b}</div>
+            <div loop-for="let value in this.test"><b>${this.test[value].a}</b>${this.test[value].b}</div>
         </for-slot>
         <hr>
         For of slot
         <for-slot>
-            <div for="let value of this.test"><b>${value.a}</b>${value.b}</div>
+            <div loop-for="let value of this.test"><b>${value.a}</b>${value.b}</div>
         </for-slot>
         <hr>
         <b>SHADOWED</b>
@@ -44,18 +44,18 @@
         <hr>
         For in slot
         <for-slot-shadowed>
-            <div for="let value in this.test"><b>${this.test[value].a}</b>${this.test[value].b}</div>
+            <div loop-for="let value in this.test"><b>${this.test[value].a}</b>${this.test[value].b}</div>
         </for-slot-shadowed>
         <hr>
         For of slot
         <for-slot-shadowed>
-            <div for="let value2 of this.test"><b test="${value2.a}">${value2.a}</b>${value2.b}</div>
+            <div loop-for="let value2 of this.test"><b test="${value2.a}">${value2.a}</b>${value2.b}</div>
         </for-slot-shadowed>
         <hr>
         Nested for in slot components
         <for-slot-shadowed>
-            <nested-for-slot-shadowed for="let value of this.test" test="${value}">
-                <div>First Level</div><div for="let value of this.test2">${value}</div><br>
+            <nested-for-slot-shadowed loop-for="let value of this.test" test="${value}">
+                <div>First Level</div><div loop-for="let value of this.test2">${value}</div><br>
             </nested-for-slot-shadowed>
         </for-slot-shadowed>
         <script src="bundle.js"></script>

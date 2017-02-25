@@ -311,7 +311,7 @@ export class Component extends HTMLElement {
     private updateDom(variableName:string):void {
         if(!this.bindMap.has(variableName)) return;
 
-        for(let value of this.bindMap.get(variableName)) { // Loop through all nodes in which the variable that triggered the update is used in
+        for(let value of this.bindMap.get(variableName)) { // LoopFor through all nodes in which the variable that triggered the update is used in
             let nodeToUpdate = value[0]; // The node in which the variable that triggered the update is in, the text can already be overwritten by the evaluation of evalText
             let evalText = value[1]; // Could contain multiple variables, but always the variable that triggered the update which is variableName
             let variableContainerObjects = value[2];
@@ -329,7 +329,7 @@ export class Component extends HTMLElement {
             if(htmlNodeToUpdate.parentNode === null) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot
 
             //TODO: Make this a seperate expression e.g. {{this.variable}} and remove value[2] from the bindMap
-            // Loop through variables, check if of type node and evaluate them seperately (These variables get removed from the evalText)
+            // LoopFor through variables, check if of type node and evaluate them seperately (These variables get removed from the evalText)
             /*for(let variablesVariableName of value[2]) {
                 if(this[variablesVariableName] instanceof NodeArray || this[variablesVariableName] instanceof HTMLElement) {
                     evalText = evalText.replace(new RegExp("\\${\\s*this." + variablesVariableName + "\\s*}", "g"), ""); // Remove already as node identified and evaluated variables from evalText

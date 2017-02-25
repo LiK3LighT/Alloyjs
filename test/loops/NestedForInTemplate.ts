@@ -7,7 +7,7 @@ export class NestedForInTemplate extends Alloy.Component {
 
     constructor() {
         super({
-            template:"<div for='let key in this.entries'><br><span for='let key2 in this.entries[key]'>${this.entries[key][key2]}</span></div>"
+            template:"<div loop-for='let key in this.entries'><br><span loop-for='let key2 in this.entries[key]'>${this.entries[key][key2]}</span></div>"
         });
     }
 

@@ -34,5 +34,5 @@ export function attribute(name?:string) {
 }
 
 // Import default plugins
-import "./plugins/loops/For";
+import "./plugins/loops/LoopFor";
 import "./plugins/events/OnClick";

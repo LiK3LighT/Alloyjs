@@ -6,7 +6,7 @@ const FOR_TYPES = {
 };
 
 //@Alloy.attribute()
-export class For extends Alloy.Attribute {
+export class LoopFor extends Alloy.Attribute {
 
     private multipliedElement:Element;
     private parentNode:Node;
@@ -32,7 +32,7 @@ export class For extends Alloy.Attribute {
         super(attributeNode);
 
         this.multipliedElement = attributeNode.ownerElement;
-        this.multipliedElement.removeAttribute("for");
+        this.multipliedElement.removeAttribute("loop-for");
         this.parentNode = this.multipliedElement.parentNode;
         this.parentNode.removeChild(this.multipliedElement);
 
@@ -78,4 +78,4 @@ export class For extends Alloy.Attribute {
     }
 
 }
-Alloy.Component.registerAttribute(For);
+Alloy.Component.registerAttribute(LoopFor);

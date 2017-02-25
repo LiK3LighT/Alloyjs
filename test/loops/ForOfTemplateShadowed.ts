@@ -7,7 +7,7 @@ export class ForOfTemplateShadowed extends Alloy.Component {
 
     constructor() {
         super({
-            template: "<div for='let value of this.entries'><b>${value}</b>${value}</div>",
+            template: "<div loop-for='let value of this.entries'><b>${value}</b>${value}</div>",
             shadowContent: true
         });
     }

@@ -1,5 +1,5 @@
 import * as Alloy from "../../Alloy"
-import {For} from "../loops/For"
+import {LoopFor} from "../loops/LoopFor"
 
 export class GenericEvent extends Alloy.Attribute {
 
@@ -7,7 +7,7 @@ export class GenericEvent extends Alloy.Attribute {
         super(attributeNode);
 
         let component = this.getComponent();
-        let variables = For.getScopeVariables(attributeNode.ownerElement);
+        let variables = LoopFor.getScopeVariables(attributeNode.ownerElement);
         let originalFunction = attributeNode.ownerElement[eventName];
 
         attributeNode.ownerElement[eventName] = function(event) {
