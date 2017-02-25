@@ -13,8 +13,13 @@
     "url": "https://github.com/koenig-dominik/Alloyjs.git#development"
   },
   "scripts": {
-    "test": "webpack.cmd --progress --colors --watch",
-    "build": "tsc.cmd"
+    "test-basic-text": "cd test/basic-text && webpack.cmd --progress --colors --watch",
+    "test-children-duplication": "cd test/children-duplication && webpack.cmd --progress --colors --watch",
+    "test-events": "cd test/events && webpack.cmd --progress --colors --watch",
+    "test-extend-native-element": "cd test/extend-native-element && webpack.cmd --progress --colors --watch",
+    "test-loops": "cd test/loops && webpack.cmd --progress --colors --watch",
+    "build": "tsc.cmd",
+    "publish": "tsc.cmd && cd publish && npm publish"
   },
   "typings": "index.d.ts",
   "author": {
