@@ -44,12 +44,12 @@
         <hr>
         For in slot
         <for-slot-shadowed>
-            <div for="let value in this.test"><b>${this.test[value]}</b>${this.test[value]}</div>
+            <div for="let value in this.test"><b>${this.test[value].a}</b>${this.test[value].b}</div>
         </for-slot-shadowed>
         <hr>
         For of slot
         <for-slot-shadowed>
-            <div for="let value of this.test"><b>${value}</b>${value}</div>
+            <div for="let value2 of this.test"><b test="${value2.a}">${value2.a}</b>${value2.b}</div>
         </for-slot-shadowed>
         <hr>
         Nested for in slot components

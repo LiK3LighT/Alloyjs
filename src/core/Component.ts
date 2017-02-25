@@ -234,15 +234,17 @@ export class Component extends HTMLElement {
 
             let variableContainerObjects = new Set();
             for(let variableName of variableNames) {
-                if(variableName.indexOf("this.") !== 0) {
-                    let containerElement:Element;
-                    if(node instanceof CharacterData) {
+                if (variableName.indexOf("this.") !== 0) {
+                    let containerElement: Element;
+                    if (node instanceof CharacterData) {
                         containerElement = node.parentElement;
+                    } else if (node instanceof Attr) {
+                        containerElement = node.ownerElement;
                     } else {
                         containerElement = node as Element;
                     }
                     let variableContainer = Component.getScopeVariableContainer(containerElement, variableName);
-                    if(variableContainer !== null) {
+                    if (variableContainer !== null) {
                         variableContainerObjects.add(variableContainer);
                     }
                 }
@@ -287,9 +289,9 @@ export class Component extends HTMLElement {
         });
     }
 
-    //TODO: Performance: it would probably faster to search for this with indexOf
+    //TODO: Performance: it would probably faster to search for this without a regex
     private evalMatchRegExp = /\${([^}]*)}/g;
-    private variablesRegExp = /\s*((?:this.)?[a-zA-Z0-9_$]+)\.*\s*/g; // TODO: could have some bugs in it
+    private variablesRegExp = /((?:this.)?[a-zA-Z0-9_$]+)(?:(?:]\.|\.)[a-zA-Z0-9_$]+)*/g; // Try it out with "this.abc.def[key].xyz.abc" and "abc.def[key].xyz.abc"
     private callForVariablesInText(text:string, callback:(variables:Set<string>) => void):void {
         let evalMatch;
         this.evalMatchRegExp.lastIndex = 0; // Reset the RegExp, better performance than recreating it every time
