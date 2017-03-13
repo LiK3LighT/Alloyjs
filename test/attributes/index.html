@@ -7,6 +7,8 @@
         <script>
             let test = document.getElementById("test");
             let i = 0;
+            test.setAttribute("dashed-test", "test");
+            test.setAttribute("camel-test", "test");
             test.setAttribute("boolean", 0);
             test.setAttribute("object", JSON.stringify('{"test": "blah"}'));
             setInterval(() => {

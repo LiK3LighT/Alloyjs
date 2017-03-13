@@ -221,7 +221,7 @@ export class Component extends HTMLElement {
             default:
                 parsedValue = newValue;
         }
-        this[name] = parsedValue;
+        this[StringUtils.toCamelCase(name)] = parsedValue;
     }
 
     private evaluateAttributeHandlers(element:Element|ShadowRoot):void { // Creates instances of specific attribute classes into the attribute node itself.

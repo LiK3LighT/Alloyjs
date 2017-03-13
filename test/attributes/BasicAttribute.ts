@@ -7,12 +7,14 @@ export class BasicAttribute extends Alloy.Component {
         text: String,
         number: Number,
         object: Object,
-        boolean: Boolean
+        boolean: Boolean,
+        "dashed-test": String,
+        camelTest: String
     };
 
     constructor() {
         super({
-            template: "${this.text}<br>${this.number}<br>${this.object}<br>${this.boolean}"
+            template: "${this.text}<br>${this.number}<br>${this.object}<br>${this.boolean}<br>${this.dashedTest}<br>${this.camelTest}"
         });
     }
 

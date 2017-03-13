@@ -20,7 +20,9 @@ export function component(options:ComponentDecoratorOptions = {}) {
 
         let observedAttributesArray = [];
         for(let attributeName in target["attributes"]) {
-            observedAttributesArray[observedAttributesArray.length] = attributeName;
+            if(!target["attributes"].hasOwnProperty(attributeName)) continue;
+
+            observedAttributesArray[observedAttributesArray.length] = StringUtils.toDashed(attributeName);
         }
         target["observedAttributes"] = observedAttributesArray;
 
