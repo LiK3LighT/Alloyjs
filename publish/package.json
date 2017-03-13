@@ -1,6 +1,6 @@
 {
   "name": "@alloyjs/core",
-  "version": "0.1.12",
+  "version": "0.1.15",
   "private": false,
   "description": "HTML data binding system using web components",
   "keywords": [
