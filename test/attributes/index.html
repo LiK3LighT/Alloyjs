@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <basic-attribute id="test"></basic-attribute>
+        <script>
+            let test = document.getElementById("test");
+            let i = 0;
+            test.setAttribute("boolean", 0);
+            test.setAttribute("object", JSON.stringify('{"test": "blah"}'));
+            setInterval(() => {
+                test.setAttribute("text", i++);
+                test.setAttribute("number", i++);
+            }, 1000);
+        </script>
+        <script src="bundle.js"></script>
+    </body>
+</html>

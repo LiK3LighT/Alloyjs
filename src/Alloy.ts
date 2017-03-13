@@ -18,6 +18,12 @@ export function component(options:ComponentDecoratorOptions = {}) {
             options.name = StringUtils.toDashed(target.name);
         }
 
+        let observedAttributesArray = [];
+        for(let attributeName in target["attributes"]) {
+            observedAttributesArray[observedAttributesArray.length] = attributeName;
+        }
+        target["observedAttributes"] = observedAttributesArray;
+
         if (options.extend !== undefined) {
             customElements.define(options.name, target, {"extends": options.extend});
         } else {

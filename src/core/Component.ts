@@ -10,6 +10,7 @@ export class Component extends HTMLElement {
 
     private static registeredAttributes = new Map();
     private isAlloyComponent = true;
+    private attributeTypes:Object;
 
     private assignedSlotNodes:Map<string, NodeArray> = new Map();
 
@@ -26,6 +27,8 @@ export class Component extends HTMLElement {
 
     constructor(options:ComponentOptions) {
         super();
+
+        this.attributeTypes = this.constructor["attributes"];
 
         new Promise((resolve, reject) => {
             let templatePromise:Promise<string|void>;
@@ -193,6 +196,32 @@ export class Component extends HTMLElement {
         for (let i = 0, node; node = nodeList[i]; i++) {
             this.updateBindings(node);
         }
+    }
+
+    //noinspection JSUnusedLocalSymbols
+    private attributeChangedCallback(name:string, oldValue:string, newValue:string):void {
+        let parsedValue:any;
+        switch(this.attributeTypes[name]) {
+            case String:
+                parsedValue = newValue;
+                break;
+            case Object:
+                try {
+                    parsedValue = JSON.parse(newValue);
+                } catch(error) {
+                    console.error("Tried to parse invalid JSON \"%s\" for the attribute \"%s\" in the component \"%s\" maybe try a JSON.stringify", newValue, name, this.constructor.name);
+                }
+                break;
+            case Boolean:
+                parsedValue = (newValue === "true" || newValue === "1");
+                break;
+            case Number:
+                parsedValue = parseFloat(newValue);
+                break;
+            default:
+                parsedValue = newValue;
+        }
+        this[name] = parsedValue;
     }
 
     private evaluateAttributeHandlers(element:Element|ShadowRoot):void { // Creates instances of specific attribute classes into the attribute node itself.
