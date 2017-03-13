@@ -54,8 +54,8 @@
         <hr>
         Nested for in slot components
         <for-slot-shadowed>
-            <nested-for-slot-shadowed loop-for="let value of this.test" test="${value}">
-                <div>First Level</div><div loop-for="let value of this.test2">${value}</div><br>
+            <nested-for-slot-shadowed loop-for="let value1 of this.test" test="${value1}">
+                <div>First Level</div><div loop-for="let value2 of this.test2">${value2}</div><br>
             </nested-for-slot-shadowed>
         </for-slot-shadowed>
         <script src="bundle.js"></script>

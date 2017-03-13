@@ -233,10 +233,6 @@ export class Component extends HTMLElement {
                 }
             }
         }
-        /*let nodeList = element.childNodes; // Probably not needded because evaluateAttributeHanders is executed for every node anyways? // Breaks nested for loops in different components
-        for (let i = 0, node; node = nodeList[i]; i++) {
-            this.evaluateAttributeHandlers(node);
-        }*/
     }
 
     private static getScopeVariableContainer(element:Element, variableName:string) {
@@ -355,7 +351,7 @@ export class Component extends HTMLElement {
                 htmlNodeToUpdate = nodeToUpdate;
             }
 
-            if(htmlNodeToUpdate.parentNode === null) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot
+            if(htmlNodeToUpdate === null || htmlNodeToUpdate.parentNode === null) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot, CharacterData can apparantly also not be connected which is why the htmlNodeToUpdate === null check exists
 
             //TODO: Make this a seperate expression e.g. {{this.variable}} and remove value[2] from the bindMap
             // LoopFor through variables, check if of type node and evaluate them seperately (These variables get removed from the evalText)
