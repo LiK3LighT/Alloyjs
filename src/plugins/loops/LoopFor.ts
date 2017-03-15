@@ -10,9 +10,11 @@ export class LoopFor extends Alloy.Attribute {
 
     private multipliedElement:Element;
     private parentNode:Node;
+    private nextSibling:Node;
     private forType:string;
     private toVariable:string;
     private fromVariable:string;
+    private lastInsertedKey:(number|string);
 
     private appendedChildren = new Map();
 
@@ -32,6 +34,8 @@ export class LoopFor extends Alloy.Attribute {
         super(attributeNode);
 
         this.multipliedElement = attributeNode.ownerElement;
+        this.nextSibling = this.multipliedElement.nextSibling;
+
         this.multipliedElement.removeAttribute("loop-for");
         this.parentNode = this.multipliedElement.parentNode;
         this.parentNode.removeChild(this.multipliedElement);
@@ -45,15 +49,38 @@ export class LoopFor extends Alloy.Attribute {
         this.fromVariable = parts[1].substring(parts[1].indexOf(".") + 1).trim();
     }
 
+    // Optimize this ...
     update() {
         let from = this.component[this.fromVariable];
         for(let key in from) {
             if(!from.hasOwnProperty(key)) continue;
 
             if(!this.appendedChildren.has(key)) {
+
+                let insertBeforeNode:Node;
+                if(from instanceof Array) {
+                    let intKey = parseInt(key);
+
+                    if(this.appendedChildren.has((intKey-1).toString())) {
+                        insertBeforeNode = this.appendedChildren.get((intKey-1).toString()).nextSibling;
+                    } else if(intKey === 0) {
+                        insertBeforeNode = this.nextSibling;
+                    } else {
+                        insertBeforeNode = this.appendedChildren.get(this.lastInsertedKey).nextSibling;
+                    }
+
+                } else {
+                    if(this.appendedChildren.size !== 0) {
+                        insertBeforeNode = this.appendedChildren.get(this.lastInsertedKey).nextSibling;
+                    } else {
+                        insertBeforeNode = this.nextSibling;
+                    }
+                }
+                this.lastInsertedKey = key;
+
                 let newElement = <Element>this.multipliedElement.cloneNode(true);
                 newElement._variables = Object.create(null);
-                this.parentNode.appendChild(newElement);
+                this.parentNode.insertBefore(newElement, insertBeforeNode);
                 if(this.forType == FOR_TYPES.IN) {
                     newElement._variables[this.toVariable] = key;
                 } else {

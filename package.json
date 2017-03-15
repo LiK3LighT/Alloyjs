@@ -13,6 +13,7 @@
     "url": "https://github.com/koenig-dominik/Alloyjs.git#development"
   },
   "scripts": {
+    "test-temp": "cd test/temp && webpack.cmd --progress --colors --watch",
     "test-basic-text": "cd test/basic-text && webpack.cmd --progress --colors --watch",
     "test-attributes": "cd test/attributes && webpack.cmd --progress --colors --watch",
     "test-children-duplication": "cd test/children-duplication && webpack.cmd --progress --colors --watch",
