@@ -49,9 +49,22 @@ export class LoopFor extends Alloy.Attribute {
         this.fromVariable = parts[1].substring(parts[1].indexOf(".") + 1).trim();
     }
 
+    private finalizeInsertedElement(newElement:Element, insertBeforeNode:Node, key:string, from:any) {
+        newElement._variables = Object.create(null);
+        this.parentNode.insertBefore(newElement, insertBeforeNode);
+        if(this.forType == FOR_TYPES.IN) {
+            newElement._variables[this.toVariable] = key;
+        } else {
+            newElement._variables[this.toVariable] = from[key];
+        }
+        this.component.updateBindings(newElement);
+        this.component.trackVariableUpdates(newElement._variables, this.toVariable);
+    }
+
     // Optimize this ...
-    update() {
+    update(name) {
         let from = this.component[this.fromVariable];
+
         for(let key in from) {
             if(!from.hasOwnProperty(key)) continue;
 
@@ -79,17 +92,15 @@ export class LoopFor extends Alloy.Attribute {
                 this.lastInsertedKey = key;
 
                 let newElement = <Element>this.multipliedElement.cloneNode(true);
-                newElement._variables = Object.create(null);
-                this.parentNode.insertBefore(newElement, insertBeforeNode);
-                if(this.forType == FOR_TYPES.IN) {
-                    newElement._variables[this.toVariable] = key;
-                } else {
-                    newElement._variables[this.toVariable] = from[key];
-                }
-                this.component.updateBindings(newElement);
-                this.component.trackVariableUpdates(newElement._variables, this.toVariable);
-
                 this.appendedChildren.set(key, newElement);
+
+                if(newElement["isAlloyComponent"] === true) {
+                    (newElement as Alloy.Component).created = () => {
+                        this.finalizeInsertedElement(newElement, insertBeforeNode, key, from);
+                    }
+                } else {
+                    this.finalizeInsertedElement(newElement, insertBeforeNode, key, from);
+                }
             }
         }
         if(this.appendedChildren !== undefined) {

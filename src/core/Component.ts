@@ -115,7 +115,7 @@ export class Component extends HTMLElement {
     }
 
     /* Can be overwritten, is called by constructor */
-    protected created():void {
+    public created():void {
 
     }
 
@@ -186,7 +186,7 @@ export class Component extends HTMLElement {
 
         this.evaluateAttributeHandlers(element);
 
-        if(inBindMap === false) { // If this node is not already bound and a child of the component
+        if(inBindMap === false) { // If this node is not already bound and is a child of the component
             NodeUtils.recurseTextNodes(element, (node, text) => {
                 this.setupBindMapForNode(node, text);
             });
@@ -248,15 +248,6 @@ export class Component extends HTMLElement {
     private setupBindMapForNode(node:Node, text:string):void {
         let alreadyBoundForNode = new Set();
         this.callForVariablesInText(text, (variableNames) => {
-            /*let thisLessVariableNames = new Set();
-            for(let variableName of variableNames) {
-                if(variableName.indexOf("this.") === 0) {
-                    thisLessVariableNames.add(variableName.substring(5));
-                } else {
-                    thisLessVariableNames.add(variableName);
-                }
-            }*/
-
             let variableContainerObjects = new Set();
             for(let variableName of variableNames) {
                 if (variableName.indexOf("this.") !== 0) {
@@ -296,18 +287,7 @@ export class Component extends HTMLElement {
                             CommonUtils.addVariableUpdateCallback(this, variableName.substring(5), () => {
                                 this.triggerUpdateCallbacks(variableName);
                             });
-                        }/* else {
-                            let containerNode:Element;
-                            if(node instanceof CharacterData) {
-                                containerNode = node.parentElement;
-                            } else {
-                                containerNode = node as Element;
-                            }
-
-                            CommonUtils.addVariableUpdateCallback(containerNode._variables, variableName, () => {
-                                this.triggerUpdateCallbacks(variableName);
-                            });
-                        }*/
+                        }
                     }
                 }
             }
