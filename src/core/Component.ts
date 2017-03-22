@@ -331,7 +331,8 @@ export class Component extends HTMLElement {
                 htmlNodeToUpdate = nodeToUpdate;
             }
 
-            if(htmlNodeToUpdate.getRootNode() === htmlNodeToUpdate) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot, CharacterData can apparantly also not be connected which is why the htmlNodeToUpdate === null check exists
+            let rootNode = htmlNodeToUpdate.getRootNode();
+            if(rootNode instanceof HTMLDocument === false && rootNode instanceof ShadowRoot === false) continue; // Skip nodes that are not added to the visible dom, can't use parentElement cause that would be null if the element was in a shadowRoot, CharacterData can apparantly also not be connected which is why the htmlNodeToUpdate === null check exists
 
             //TODO: Make this a seperate expression e.g. {{this.variable}} and remove value[2] from the bindMap
             // LoopFor through variables, check if of type node and evaluate them seperately (These variables get removed from the evalText)
