@@ -76,10 +76,10 @@ export class LoopFor extends Alloy.Attribute {
 
                     if(this.appendedChildren.has((intKey-1).toString())) {
                         insertBeforeNode = this.appendedChildren.get((intKey-1).toString()).nextSibling;
-                    } else if(intKey === 0) {
-                        insertBeforeNode = this.nextSibling;
-                    } else {
+                    } else if(this.appendedChildren.size !== 0) {
                         insertBeforeNode = this.appendedChildren.get(this.lastInsertedKey).nextSibling;
+                    } else {
+                        insertBeforeNode = this.nextSibling;
                     }
 
                 } else {
