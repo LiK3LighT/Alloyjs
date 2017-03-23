@@ -95,9 +95,11 @@ export class Component extends HTMLElement {
                     this.innerHTML += values[0];
 
                     let slot = this.querySelector("slot");
-                    for(let i = 0, length = defaultAssignedSlotNodes.length; i < length; i++) {
-                        let node = defaultAssignedSlotNodes[i];
-                        slot.appendChild(node);
+                    if(slot !== null) {
+                        for (let i = 0, length = defaultAssignedSlotNodes.length; i < length; i++) {
+                            let node = defaultAssignedSlotNodes[i];
+                            slot.appendChild(node);
+                        }
                     }
 
                     this.updateBindings(this);
