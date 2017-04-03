@@ -1,6 +1,23 @@
+import {Component} from "../core/Component";
+
 export class NodeUtils {
 
-    static isNodeChildOfComponent(parent:Node, child:Node) {
+    static getParentComponent(startNode:Node):Component {
+        let parentElement = startNode.parentElement;
+        if(parentElement == null || NodeUtils.isComponent(parentElement)) { // Null in case of shadowRoot
+            return parentElement as Component;
+        }
+        if(parentElement !== document.body) {
+            return NodeUtils.getParentComponent(parentElement);
+        }
+        return null;
+    }
+
+    static isComponent(element:Element):boolean {
+        return element.constructor === HTMLElement || element.constructor instanceof Component
+    }
+
+    static isNodeChildOfComponent(parent:Node, child:Node):boolean {
         let root = child.getRootNode();
         if(root instanceof ShadowRoot) {
             if((root as ShadowRoot).host === parent) {
@@ -11,7 +28,7 @@ export class NodeUtils {
             if(parentElement === parent) {
                 return true;
             }
-            if(parentElement === null || parentElement === document.body || parentElement["isAlloyComponent"] !== undefined) {
+            if(parentElement === null || parentElement === document.body || NodeUtils.isComponent(parentElement)) {
                 return false;
             }
             return this.isNodeChildOfComponent(parent, parentElement);

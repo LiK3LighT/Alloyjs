@@ -16,10 +16,10 @@ export class BasicAttribute extends Alloy.Component {
         super({
             template: "${this.text}<br>${this.number}<br>${this.object}<br>${this.boolean}<br>${this.dashedTest}<br>${this.camelTest}"
         });
-    }
 
-    created() {
-        console.log(BasicAttribute.attributes);
+        this.created.then(() => {
+            console.log(BasicAttribute.attributes);
+        });
     }
 
 }

@@ -9,10 +9,10 @@ export class OnclickFunction extends Alloy.Component {
         super({
             template: "<button onclick='this.test(event)'>click me!</button>"
         });
-    }
 
-    created() {
-        this.entries = ["a", "b", "c"];
+        this.created.then(() => {
+            this.entries = ["a", "b", "c"];
+        });
     }
 
     test(event) {

@@ -8,8 +8,12 @@ const DEFAULT_SLOT_KEY = "";
 
 export class Component extends HTMLElement {
 
+    public created:Promise<{}>;
+    private createdPromiseReject:Function;
+    private createdPromiseResolve:Function;
+
     private static registeredAttributes = new Map();
-    private isAlloyComponent = true;
+    private parentComponent:Component;
     private attributeTypes:Object;
 
     private assignedSlotNodes:Map<string, NodeArray> = new Map();
@@ -28,9 +32,25 @@ export class Component extends HTMLElement {
     constructor(options:ComponentOptions) {
         super();
 
+        let createCreatePromise = (parent:Component) => {
+            parent.created = new Promise((resolve, reject) => {
+                parent.createdPromiseResolve = resolve;
+                parent.createdPromiseReject = reject;
+            });
+        };
+
+        if(this.created === undefined) {
+            createCreatePromise(this);
+        }
+
+        this.parentComponent = NodeUtils.getParentComponent(this);
+        if(this.parentComponent !== null && this.parentComponent.created === undefined) {
+            createCreatePromise(this.parentComponent);
+        }
+
         this.attributeTypes = this.constructor["attributes"];
 
-        new Promise((resolve, reject) => {
+        let templatePromise = new Promise((resolve, reject) => {
             let templatePromise:Promise<string|void>;
             let stylesheetPromise:Promise<string|void>;
             if(options.template !== undefined) {
@@ -69,7 +89,10 @@ export class Component extends HTMLElement {
                 }).catch(error => {
                     reject(error);
                 });
-        }).then((values) => {
+        });
+
+        let parentCreatedPromise = this.parentComponent == null ? true : this.parentComponent.created;
+        Promise.all([templatePromise, parentCreatedPromise]).then((values) => {
             if(values[0] !== undefined) {
                 if(options.shadowContent === true) {
                     let shadowRoot = this.attachShadow({"mode": "open"});
@@ -106,19 +129,17 @@ export class Component extends HTMLElement {
                 }
             }
 
-            this.created();
+            this.createdPromiseResolve();
+            console.log("Resolved", this);
         }).catch((error) => {
             if(error instanceof TypeError) {
                 //noinspection TypeScriptUnresolvedVariable
                 error = error.stack;
             }
             console.error("Failed to initialize component %o", this, error);
+
+            this.createdPromiseReject(error);
         });
-    }
-
-    /* Can be overwritten, is called by constructor */
-    public created():void {
-
     }
 
     /* Can be overwritten, is called by triggerUpdateCallbacks */

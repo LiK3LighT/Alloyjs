@@ -10,10 +10,10 @@ export class NestedForSlotShadowed extends Alloy.Component {
             template: "<slot>",
             shadowContent: true
         });
-    }
 
-    created() {
-        this.test2 = [1, 2, 3, 4]
+        this.created.then(() => {
+            this.test2 = [1, 2, 3, 4];
+        });
     }
 
 }

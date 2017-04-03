@@ -9,19 +9,19 @@ export class ForSlot extends Alloy.Component {
         super({
             template: "<slot>"
         });
-    }
 
-    created() {
-        this.test = [
-            {
-                "a": 0,
-                "b": 1
-            },
-            {
-                "a": 0,
-                "b": 1
-            }
-        ]
+        this.created.then(() => {
+            this.test = [
+                {
+                    "a": 0,
+                    "b": 1
+                },
+                {
+                    "a": 0,
+                    "b": 1
+                }
+            ]
+        });
     }
 
 }

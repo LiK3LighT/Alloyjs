@@ -10,11 +10,11 @@ export class AttributeText extends Alloy.Component {
         super({
             template: "<div test='${this.text + this.text2}'></div>"
         });
-    }
 
-    created() {
-        this.text = "Hello world!";
-        this.text2 = "Blah"
+        this.created.then(() => {
+            this.text = "Hello world!";
+            this.text2 = "Blah"
+        });
     }
 
 }

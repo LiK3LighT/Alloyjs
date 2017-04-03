@@ -9,10 +9,10 @@ export class ExtendNativeButton extends Alloy.Component {
         super({
             template: "test"
         });
-    }
 
-    created() {
-        console.log(this);
+        this.created.then(() => {
+            console.log(this);
+        });
     }
 
 }

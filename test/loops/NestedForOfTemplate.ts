@@ -9,16 +9,16 @@ export class NestedForOfTemplate extends Alloy.Component {
         super({
             template:"<div loop-for='let values of this.entries'><br><span loop-for='let value of values'>${value}</span></div>"
         });
-    }
 
-    created() {
-        let self = this;
-        self.entries = [
-            [1, 2, 3, 4],
-            [1, 2, 3, 4],
-            [1, 2, 3, 4],
-            [1, 2, 3, 4]
-        ];
+        this.created.then(() => {
+            let self = this;
+            self.entries = [
+                [1, 2, 3, 4],
+                [1, 2, 3, 4],
+                [1, 2, 3, 4],
+                [1, 2, 3, 4]
+            ];
+        });
     }
 
 }

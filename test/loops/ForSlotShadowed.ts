@@ -10,19 +10,19 @@ export class ForSlotShadowed extends Alloy.Component {
             template: "<slot>",
             shadowContent: true
         });
-    }
 
-    created() {
-        this.test = [
-            {
-                "a": 0,
-                "b": 1
-            },
-            {
-                "a": 0,
-                "b": 1
-            }
-        ]
+        this.created.then(() => {
+            this.test = [
+                {
+                    "a": 0,
+                    "b": 1
+                },
+                {
+                    "a": 0,
+                    "b": 1
+                }
+            ]
+        });
     }
 
 }

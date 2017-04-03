@@ -9,11 +9,11 @@ export class ForOfTemplate extends Alloy.Component {
         super({
             template: "<div loop-for='let value of this.entries'><b>${value}</b>${value}</div>"
         });
-    }
 
-    created() {
-        let self = this;
-        self.entries = [1, 2, 3, 4];
+        this.created.then(() => {
+            let self = this;
+            self.entries = [1, 2, 3, 4];
+        });
     }
 
 }

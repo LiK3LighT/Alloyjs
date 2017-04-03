@@ -95,9 +95,9 @@ export class LoopFor extends Alloy.Attribute {
                 this.appendedChildren.set(key, newElement);
 
                 if(newElement["isAlloyComponent"] === true) {
-                    (newElement as Alloy.Component).created = () => {
+                    (newElement as Alloy.Component).created.then(() => {
                         this.finalizeInsertedElement(newElement, insertBeforeNode, key, from);
-                    }
+                    });
                 } else {
                     this.finalizeInsertedElement(newElement, insertBeforeNode, key, from);
                 }

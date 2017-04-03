@@ -10,11 +10,11 @@ export class ForOfTemplateShadowed extends Alloy.Component {
             template: "<div loop-for='let value of this.entries'><b>${value}</b>${value}</div>",
             shadowContent: true
         });
-    }
 
-    created() {
-        let self = this;
-        self.entries = [1, 2, 3, 4];
+        this.created.then(() => {
+            let self = this;
+            self.entries = [1, 2, 3, 4];
+        });
     }
 
 }

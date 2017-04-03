@@ -9,10 +9,10 @@ export class NodeText extends Alloy.Component {
         super({
             template: "${this.text}"
         });
-    }
 
-    created() {
-        this.text = "Hello world!";
+        this.created.then(() => {
+            this.text = "Hello world!";
+        });
     }
 
 }

@@ -9,10 +9,10 @@ export class DuplicateChild extends Alloy.Component {
         super({
             template: "</div><div><slot></slot></div><div>${this.children1}</div>"
         });
-    }
 
-    created() {
-        this.children1 = this.getAssignedSlotNodes().clone();
+        this.created.then(() => {
+            this.children1 = this.getAssignedSlotNodes().clone();
+        });
     }
 
 }
