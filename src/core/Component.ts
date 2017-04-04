@@ -92,7 +92,8 @@ export class Component extends HTMLElement {
         });
 
         let parentCreatedPromise = this.parentComponent == null ? true : this.parentComponent.created;
-        Promise.all([templatePromise, parentCreatedPromise]).then((values) => {
+        Promise.all([templatePromise, parentCreatedPromise]).then((results) => {
+            let values = results[0];
             if(values[0] !== undefined) {
                 if(options.shadowContent === true) {
                     let shadowRoot = this.attachShadow({"mode": "open"});
