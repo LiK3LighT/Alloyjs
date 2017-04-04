@@ -131,7 +131,6 @@ export class Component extends HTMLElement {
             }
 
             this.createdPromiseResolve();
-            console.log("Resolved", this);
         }).catch((error) => {
             if(error instanceof TypeError) {
                 //noinspection TypeScriptUnresolvedVariable
