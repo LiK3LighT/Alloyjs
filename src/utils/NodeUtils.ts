@@ -4,7 +4,7 @@ export class NodeUtils {
 
     static getParentComponent(startNode:Node):Component {
         let parentElement = startNode.parentElement;
-        if(parentElement == null || NodeUtils.isComponent(parentElement)) { // Null in case of shadowRoot
+        if(parentElement == null || NodeUtils.isCustomElement(parentElement)) { // Null in case of shadowRoot
             return parentElement as Component;
         }
         if(parentElement !== document.body) {
@@ -13,8 +13,8 @@ export class NodeUtils {
         return null;
     }
 
-    static isComponent(element:Element):boolean {
-        return element.constructor === HTMLElement || element.constructor instanceof Component
+    static isCustomElement(element:Element):boolean {
+        return element.tagName.indexOf("-") !== -1;
     }
 
     static isNodeChildOfComponent(parent:Node, child:Node):boolean {
@@ -28,7 +28,7 @@ export class NodeUtils {
             if(parentElement === parent) {
                 return true;
             }
-            if(parentElement === null || parentElement === document.body || NodeUtils.isComponent(parentElement)) {
+            if(parentElement === null || parentElement === document.body || NodeUtils.isCustomElement(parentElement)) {
                 return false;
             }
             return this.isNodeChildOfComponent(parent, parentElement);
